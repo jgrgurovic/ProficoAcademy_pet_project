@@ -1,34 +1,20 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+#True Crime Platforma: Duboko zaronite u neriješene slučajeve
 
-## Getting Started
+Platforma koja poziva korisnike da istraže mnoštvo stvarnih slučajeva zločina, omogućujući im da urone u misterije i zamršenosti neriješenih scenarija. Služi kao centralizirano središte, agregirajući sadržaj iz različitih izvora kao što su Youtube i Spotify, dok istovremeno zadovoljava sve veći interes za istinite zločine.
 
-First, run the development server:
+##Features:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+1.**Korisnički profili:**Stvaranje korisničkih profila, pružanje pristupa za sudjelovanje u raspravama oko podcasta i videa. Uz postavljene profile, korisnici mogu doprinijeti svojim uvidima i mišljenjima, potičući živu zajednicu.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2.**Filtriranje:** Korisnici se mogu bez napora kretati kroz spektar slučajeva, koristeći filtre kao što su razlikovanje hladnih od riješenih slučajeva, razlikovanje sadržaja dostupnog na YouTubeu i Spotifyju i razvrstavanje po datumu objave.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3.**Bookmarking:** Bilo da je namijenjeno za kasnije slušanje ili gledanje, značajka označavanja osigurava organizaciju intrigantnih slučajeva bez muke.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+4.**User-generated Content:** Omogućuje korisnicima da aktivno sudjeluju predlaganjem i podnošenjem vlastitih istinitih slučajeva zločina. Otvarajući vrata za sadržaj koji generiraju korisnici, platforma njeguje atmosferu suradnje, potičući evoluirajuće spremište zadivljujućih narativa.
 
-## Learn More
+5.**Content Recommendation:** Na homepage-u korisnicima će biti predloženi : 'featured' slučajevi, najgledaniji videi, najslušaniji podcastov-i
 
-To learn more about Next.js, take a look at the following resources:
+*U osnovi centralizira sadržaj true crime-a koristeći YouTube i Spotify API-je, istovremeno korisnicima omogućuje diskusiju (koja se trenutno vodi po youtube-u i reddit-u) i međusbonu neku interakciju. Korisnici mogu komentirati, označavati omiljene slučajeve, davati ocjene, filtrirati sadržaj i pretraživati po nazivu. Omogućuje korisnicima da uživaju u istraživanju true crime sadržaja i miče potrebu kopanja po internetu za dodatnim sadržajem.*
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+#Trenutna Figma :) ![Project Screenshot](/public/figma31.8..png)
