@@ -1,10 +1,10 @@
-import { Footer, Navbar } from '../../components'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './globals.css'
+import { Footer, Navbar } from "../../components"
+import "bootstrap/dist/css/bootstrap.min.css"
+import "./globals.css"
 
 export const metadata = {
-  title: 'True Crime',
-  description: 'Discover true crime stories.',
+  title: "True Crime",
+  description: "Discover true crime stories.",
 }
 
 export default function RootLayout({
@@ -15,13 +15,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="relative">
-        <Navbar/>
-        {/* <div className="noise-gradient-container"></div> */}
-       <div className="z-10">
-        {children}
-        </div>
-        <Footer/>
-        </body>
+        <Navbar />
+        <div className="z-10">{children}</div>
+        <Footer />
+      </body>
     </html>
   )
 }
