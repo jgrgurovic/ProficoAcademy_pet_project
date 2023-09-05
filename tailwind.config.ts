@@ -6,18 +6,14 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-
   ],
   theme: {
     extend: {
-      colors: {
-        "red-600": "#AC0000",
-      },
       fontFamily: {
         sans: "Helvetica, Arial, sans-serif",
       },
       colors: {
-        mainRed: '#ac0000',
+        mainRed: "#ac0000",
       },
     },
   },
