@@ -17,23 +17,15 @@
 }
 
 body {
+
+  background: linear-gradient(270deg, #5d0006 50%, #000000 100%);
   font-family: "Courier Prime";
   color: rgb(var(--foreground-rgb));
   background-color: black;
 }
 
-.noise-gradient-container {
-  background: url("/Group.svg") center center;
-  background-size: cover;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: -1;
-}
-
 @font-face {
   font-family: "Courier Prime";
   src: url("/fonts/CourierPrime-Regular.ttf") format("truetype");
+
 }
