@@ -40,7 +40,7 @@ export default function Home() {
         </h2>
       </div>
       <div>
-        <h2 className="m-24 text-2xl">Have a case you're passionate about?</h2>
+      <h2 className="m-24 text-2xl">Have a case you&apos;re passionate about?</h2>
         <Form />
       </div>
     </main>
