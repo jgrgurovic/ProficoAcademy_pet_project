@@ -1,7 +1,7 @@
 "use client"
 import React from "react"
 import Image from "next/image"
-import HeroImage from "../../public/images/hero_streetimage.png"
+import HeroImage from "../../public/hero_streetimage.png"
 import { usePathname } from "next/navigation"
 
 function capitalizeFirstLetter(string: string): string {
