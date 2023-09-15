@@ -1,4 +1,4 @@
-import { Footer, NavigationHeader } from "../components"
+import { Footer,Navbar } from "../components"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "./globals.css"
 
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="relative">
-        <NavigationHeader />
+        <Navbar />
         <div>{children}</div>
         <Footer />
       </body>
