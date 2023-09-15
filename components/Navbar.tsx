@@ -30,7 +30,7 @@ const Navbar = () => {
         </button>
       </form>
       <div>
-        <Link href="" className="mr-12 text-xl text-white">
+        <Link href="/login" className="mr-12 text-xl text-white">
           Sign Up
         </Link>
       </div>
