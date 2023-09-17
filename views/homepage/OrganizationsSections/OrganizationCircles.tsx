@@ -1,5 +1,6 @@
 import organizations from "../../../constants/organizations"
 import Image from "next/image"
+
 const OrganizationCircles = () => {
   return (
     <div className="flex justify-center">

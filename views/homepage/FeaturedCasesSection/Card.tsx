@@ -1,4 +1,5 @@
 import Image from "next/image"
+
 const CasesCard = () => {
   return (
     <div className="max-w-sm mx-auto">
