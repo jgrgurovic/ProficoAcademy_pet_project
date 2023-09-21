@@ -21,7 +21,7 @@ const Navbar = () => {
         <input
           className="form-control mr-sm-2"
           type="search"
-          placeholder="Search"
+          placeholder="Search..."
           aria-label="Search"></input>
         <button
           className=" border border-red-600 text-red-600 py-2 px-4 rounded-lg transition-colors hover:bg-red-600 hover:text-white"
