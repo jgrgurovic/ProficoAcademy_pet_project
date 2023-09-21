@@ -46,21 +46,6 @@ export function CaseForm() {
     setTimeout(() => {
       setSubmissionSuccess(false)
     }, 5000)
-    const emailInput = document.querySelector(
-      'input[name="email"]'
-    ) as HTMLInputElement
-    const caseTitleInput = document.querySelector(
-      'input[name="caseTitle"]'
-    ) as HTMLInputElement
-    const caseStoryTextarea = document.querySelector(
-      'textarea[name="caseStory"]'
-    ) as HTMLTextAreaElement
-
-    if (emailInput && caseTitleInput && caseStoryTextarea) {
-      emailInput.value = ""
-      caseTitleInput.value = ""
-      caseStoryTextarea.value = ""
-    }
   }
 
   const handleEmailFieldFocus = () => {

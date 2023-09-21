@@ -1,4 +1,4 @@
-import organizations from "../../../constants/organizations"
+import organizations from "../../../config/organizations"
 import Image from "next/image"
 
 const OrganizationCircles = () => {
