@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Hero from "../../components/Hero"
-import { Card, Form } from "../../components"
+import Card from "../../components/Card"
+import Form from "../../components/Form"
 
 export default function Home() {
   return (
@@ -40,7 +41,9 @@ export default function Home() {
         </h2>
       </div>
       <div>
-      <h2 className="m-24 text-2xl">Have a case you&apos;re passionate about?</h2>
+        <h2 className="m-24 text-2xl">
+          Have a case you&apos;re passionate about?
+        </h2>
         <Form />
       </div>
     </main>
