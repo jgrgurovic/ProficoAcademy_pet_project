@@ -1,5 +1,5 @@
-import { Footer } from "@/components"
-import {NavigationHeader} from "@/components"
+import Footer from "@/components/Footer"
+import NavigationHeader from "@/components/Navigation"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "./globals.css"
 

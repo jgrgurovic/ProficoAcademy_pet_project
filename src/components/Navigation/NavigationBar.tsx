@@ -2,7 +2,7 @@
 import React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import navTabs from "../../constants/navbar"
+import navTabs from "../../../constants/navbar"
 
 const NavigationBar = () => {
   const pathname = usePathname()

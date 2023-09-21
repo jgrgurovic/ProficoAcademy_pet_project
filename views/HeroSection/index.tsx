@@ -1,12 +1,10 @@
 "use client"
 import React from "react"
 import Image from "next/image"
+import { capitalizeFirstLetter } from "../../utils/static/capitalizeFirstLetter"
 import HeroImage from "../../public/hero_streetimage.png"
 import { usePathname } from "next/navigation"
 
-function capitalizeFirstLetter(string: string): string {
-  return string.charAt(0).toUpperCase() + string.slice(1)
-}
 const HeroPages = () => {
   const pathname = usePathname()
   const pathParts = pathname.split("/")
