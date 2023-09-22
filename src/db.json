@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "jhon.doe@example.com",
+      "password": "123456",
+      "avatar": "https://i.pravatar.cc/150?img=8",
+      "role": "admin"
+    },
+    {
+      "id": 2,
+      "name": "Jane Doe",
+      "email": "jane.doe@example.com",
+      "password": "654321",
+      "avatar": "https://i.pravatar.cc/150?img=21",
+      "role": "user"
+    },
+    {
+      "id": 3,
+      "name": "John Smith",
+      "email": "",
+      "password": "123456",
+      "avatar": "https://i.pravatar.cc/150?img=67",
+      "role": "user"
+    },
+    {
+      "id":4,
+      "name": "Lara Laric",
+      "email": "lara.laric@example.com",
+      "password": "lara",
+      "avatar": "https://i.pravatar.cc/150?img=67",
+      "role":"user"
+    }
+  ]
+}
