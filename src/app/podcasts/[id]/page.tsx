@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import SpotifyLogo from "/public/images/logos/spotify-logo.svg"
 
-import { PodcastEpisode } from "../../../../utils/static/fetchPodcastsFromSpotify"
+import { PodcastEpisode } from "@utils/static/fetchPodcastsFromSpotify"
 
 const EpisodePage = () => {
   const router = useRouter()

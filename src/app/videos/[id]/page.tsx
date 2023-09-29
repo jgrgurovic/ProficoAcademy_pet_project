@@ -6,7 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import YoutubeLogo from "/public/images/logos/YouTube-White-Dark-Background-Logo.wine.svg"
 
-import { VideoItem } from "../../../../utils/static/fetchVideosFromYouTubers"
+import { VideoItem } from "@utils/static/fetchVideosFromYouTubers"
 
 const VideoPage = () => {
   const router = useRouter()

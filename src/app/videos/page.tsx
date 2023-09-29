@@ -1,7 +1,7 @@
 import React from "react"
-import HeroPages from "../../../views/HeroSection"
-import { SearchFilter } from "../../../views/Search&FilterSection"
-import Display from "../../../views/videos/DisplaySection"
+import HeroPages from "@views/HeroSection"
+import { SearchFilter } from "@views/Search&FilterSection"
+import Display from "@views/podcasts/DisplaySection"
 
 const Videos = () => {
   return (
