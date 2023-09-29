@@ -1,3 +1,4 @@
+"use client"
 import Api from "@/api"
 import { User } from "../db"
 import { useEffect, useState } from "react"
@@ -11,6 +12,7 @@ const useAuth = () => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<UseUserError | null>(null)
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -20,7 +22,7 @@ const useAuth = () => {
       setError(UseUserError.Unknown);
       return;
     }
-  
+    setToken(token);
     Api.getInstance
     .self(token)
     .then((data) => {
@@ -36,7 +38,7 @@ const useAuth = () => {
   
   }, []);
   
-  return { user, loading, error }
+  return { user, loading, error, token }
 }
 
 export default useAuth;
