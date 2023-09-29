@@ -7,6 +7,7 @@ import Image from "next/image"
 import YoutubeLogo from "/public/images/logos/YouTube-White-Dark-Background-Logo.wine.svg"
 
 import { VideoItem } from "@utils/static/fetchVideosFromYouTubers"
+import { YOUTUBER_HEADERS } from "constants/constants"
 
 const VideoPage = () => {
   const router = useRouter()
@@ -28,11 +29,7 @@ const VideoPage = () => {
               params: {
                 part: "snippet,statistics",
               },
-              headers: {
-                "X-RapidAPI-Key":
-                  "ac41cab2aamsh587d2717936bec9p185b22jsna20c36b1f5ef",
-                "X-RapidAPI-Host": "youtube-v31.p.rapidapi.com",
-              },
+              headers: YOUTUBER_HEADERS,
             }
           )
 

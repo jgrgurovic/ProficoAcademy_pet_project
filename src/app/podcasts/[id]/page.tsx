@@ -7,6 +7,7 @@ import Image from "next/image"
 import SpotifyLogo from "/public/images/logos/spotify-logo.svg"
 
 import { PodcastEpisode } from "@utils/static/fetchPodcastsFromSpotify"
+import { SPOTIFY_HEADERS } from "constants/constants"
 
 const EpisodePage = () => {
   const router = useRouter()
@@ -25,11 +26,7 @@ const EpisodePage = () => {
           const response = await axios.get(
             `https://spotify23.p.rapidapi.com/episode/?id=${id}`,
             {
-              headers: {
-                "X-RapidAPI-Key":
-                  "ac41cab2aamsh587d2717936bec9p185b22jsna20c36b1f5ef",
-                "X-RapidAPI-Host": "spotify23.p.rapidapi.com",
-              },
+              headers: SPOTIFY_HEADERS,
             }
           )
           console.log("Condition:", response.data.data.episodeUnionV2)

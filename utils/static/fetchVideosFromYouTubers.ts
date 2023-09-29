@@ -1,4 +1,5 @@
 import axios from "axios"
+import { YOUTUBER_HEADERS } from "constants/constants"
 
 export interface VideoItem {
   snippet: {
@@ -56,11 +57,7 @@ export const fetchVideosFromPlaylists = async (
               part: part,
               maxResults: maxResults,
             },
-            headers: {
-              "X-RapidAPI-Key": apiKey,
-              "X-RapidAPI-Host": "youtube-v31.p.rapidapi.com",
-              "Cache-Control": "no-cache",
-            },
+            headers: YOUTUBER_HEADERS,
           }
         )
 

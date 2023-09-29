@@ -1,4 +1,5 @@
 import axios from "axios"
+import { SPOTIFY_HEADERS } from "constants/constants"
 
 export interface PodcastEpisode {
   id: string
@@ -49,10 +50,7 @@ export const fetchPodcastEpisodes = async (
         offset: "0",
         limit: maxResults.toString(),
       },
-      headers: {
-        "X-RapidAPI-Key": apiKey,
-        "X-RapidAPI-Host": "spotify23.p.rapidapi.com",
-      },
+      headers: SPOTIFY_HEADERS,
     }
 
     const response = await axios.request(options)
