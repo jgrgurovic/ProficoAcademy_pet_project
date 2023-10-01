@@ -4,28 +4,27 @@ import VideoList from "./VideoList"
 import {
   fetchVideosFromPlaylists,
   VideoItem,
-} from "../../../utils/static/fetchVideosFromYouTubers"
+} from "@utils/static/fetchVideosFromYouTubers"
+import { PLAYLIST_IDs } from "config/constants"
 
 const Display = () => {
   const [videos, setVideos] = useState<VideoItem[]>([])
+  const playlistIds = PLAYLIST_IDs
+  const maxResults = 10
 
   useEffect(() => {
-    const channelIds = ["UCtNdVINwfYFTQEEZgMiQ8FA"]
-    const playlistIds = ["PLCprSpAj-wvAf6l9ulK_2B_4BrHJM4j1s"]
-
     const fetchVideos = async () => {
       try {
         const allVideos: VideoItem[] = []
 
-        for (const channelId of channelIds) {
-          for (const playlistId of playlistIds) {
-            const videosFromPlaylists: VideoItem[] =
-              await fetchVideosFromPlaylists([channelId], [playlistId], 10)
+        for (const playlistId of playlistIds) {
+          const videosFromPlaylists: VideoItem[] =
+            await fetchVideosFromPlaylists([playlistId], maxResults)
 
-            allVideos.push(...videosFromPlaylists)
-          }
+          allVideos.push(...videosFromPlaylists)
         }
 
+        console.log("Fetched videos:", allVideos)
         setVideos(allVideos)
       } catch (error) {
         console.error("Error fetching videos:", error)

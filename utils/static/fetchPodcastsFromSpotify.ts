@@ -1,5 +1,5 @@
-import axios from "axios"
-import { SPOTIFY_HEADERS } from "constants/constants"
+import { SpotifyService } from "@/services/SpotifyService"
+import { PODCAST_IDs } from "config/constants"
 
 export interface PodcastEpisode {
   id: string
@@ -35,62 +35,14 @@ export interface PodcastEpisode {
   }
 }
 
-const apiKey = process.env.NEXT_PUBLIC_RAPID_API_KEY
-
 export const fetchPodcastEpisodes = async (
   podcastId: string,
   maxResults: number
 ): Promise<PodcastEpisode[]> => {
   try {
-    const options = {
-      method: "GET",
-      url: "https://spotify23.p.rapidapi.com/podcast_episodes/",
-      params: {
-        id: podcastId,
-        offset: "0",
-        limit: maxResults.toString(),
-      },
-      headers: SPOTIFY_HEADERS,
-    }
-
-    const response = await axios.request(options)
-    const episodesData =
-      response.data.data?.podcastUnionV2?.episodesV2?.items || []
-    const coverArtSources = episodesData.coverArt?.sources || []
-    const coverArtUrl =
-      coverArtSources.length > 0 ? coverArtSources[1]?.url || "" : ""
-
-    const podcastEpisodes: PodcastEpisode[] = episodesData.map(
-      (episodeData: any) => {
-        const audioItems = episodeData.entity?.data?.audio?.items || []
-        const audioUrl = audioItems.length > 0 ? audioItems[0]?.url || "" : ""
-
-        const coverArtSources =
-          episodeData.entity?.data?.coverArt?.sources || []
-        const coverArtUrl =
-          coverArtSources.length > 0 ? coverArtSources[1]?.url || "" : ""
-
-        const rawPublicationDate =
-          episodeData.entity?.data?.releaseDate?.isoString || "N/A"
-        const publicationDate = new Date(rawPublicationDate)
-        const formattedPublicationDate = publicationDate
-          .toISOString()
-          .split("T")[0]
-
-        return {
-          id: episodeData.entity?.data?.id,
-          title: episodeData.entity?.data?.name || "N/A",
-          description: episodeData.entity?.data?.description || "N/A",
-          audioUrl: audioUrl,
-          coverArtUrl: coverArtUrl,
-          duration: episodeData.entity?.data?.duration?.totalMilliseconds
-            ? episodeData.entity.data.duration.totalMilliseconds / 1000
-            : 0,
-          publicationDate: formattedPublicationDate,
-          uid: episodeData.uid || "",
-        }
-      }
-    )
+    const spotifyService = new SpotifyService()
+    const podcastEpisodes: PodcastEpisode[] =
+      await spotifyService.fetchPodcastEpisodes(podcastId, maxResults)
 
     console.log("Fetched podcast episodes:", podcastEpisodes)
     return podcastEpisodes
@@ -101,11 +53,7 @@ export const fetchPodcastEpisodes = async (
 }
 ;(async () => {
   try {
-    const podcastIds: string[] = [
-      "3DgfoleqaW61T2amZQKINx",
-      "4t4nuhMponRkNpX6xKFVNZ",
-      "4d6RwH9XKnZ6osfNVc26eJ",
-    ]
+    const podcastIds: string[] = PODCAST_IDs
     const maxResults: number = 10
 
     const allPodcastEpisodes: PodcastEpisode[] = []

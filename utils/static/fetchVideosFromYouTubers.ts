@@ -1,5 +1,5 @@
-import axios from "axios"
-import { YOUTUBER_HEADERS } from "constants/constants"
+import { YoutubeService } from "@/services/YoutubeService"
+import { PLAYLIST_IDs } from "config/constants"
 
 export interface VideoItem {
   snippet: {
@@ -9,7 +9,7 @@ export interface VideoItem {
     resourceId: {
       videoId: string
     }
-    tags: string
+    tags: string[]
     thumbnails: {
       default: {
         url: string
@@ -35,55 +35,35 @@ export interface VideoItem {
   }
 }
 
-const apiKey = process.env.NEXT_PUBLIC_RAPID_API_KEY
-
 export const fetchVideosFromPlaylists = async (
-  channelIds: string[],
   playlistIds: string[],
   maxResults: number
 ): Promise<VideoItem[]> => {
   try {
-    const part: string = "snippet"
+    const youtubeService = new YoutubeService()
+    const videos = await youtubeService.fetchVideosFromPlaylists(
+      playlistIds,
+      maxResults
+    )
 
-    const allVideos: VideoItem[] = []
-
-    for (const channelId of channelIds) {
-      for (const playlistId of playlistIds) {
-        const response = await axios.get(
-          "https://youtube-v31.p.rapidapi.com/playlistItems",
-          {
-            params: {
-              playlistId: playlistId,
-              part: part,
-              maxResults: maxResults,
-            },
-            headers: YOUTUBER_HEADERS,
-          }
-        )
-
-        const videos: VideoItem[] = response.data.items
-        allVideos.push(...videos)
-      }
-    }
-
-    console.log("Fetched videos:", allVideos)
-    return allVideos
+    console.log("Fetched videos:", videos)
+    return videos
   } catch (error) {
-    console.error("Error fetching videos from playlists:", error)
+    console.error("An error occurred:", error)
     throw error
   }
 }
 ;(async () => {
   try {
-    const channelIds: string[] = ["UCtNdVINwfYFTQEEZgMiQ8FA"]
-    const playlistIds: string[] = ["PLCprSpAj-wvAf6l9ulK_2B_4BrHJM4j1s"]
+    const playlistIds: string[] = PLAYLIST_IDs
     const maxResults: number = 10
 
     const videosFromPlaylists: VideoItem[] = await fetchVideosFromPlaylists(
-      channelIds,
       playlistIds,
       maxResults
     )
+
+    console.log("Fetched videos from playlists:", videosFromPlaylists)
   } catch (error) {
     console.error("An error occurred:", error)
   }

@@ -4,15 +4,12 @@ import PodcastList from "./PodcastList"
 import {
   PodcastEpisode,
   fetchPodcastEpisodes,
-} from "../../../utils/static/fetchPodcastsFromSpotify"
+} from "@utils/static/fetchPodcastsFromSpotify"
+import { PODCAST_IDs } from "config/constants"
 
 const Display = () => {
   const [podcastEpisodes, setPodcastEpisodes] = useState<PodcastEpisode[]>([])
-  const podcastIds: string[] = [
-    "3DgfoleqaW61T2amZQKINx",
-    "4t4nuhMponRkNpX6xKFVNZ",
-    "4d6RwH9XKnZ6osfNVc26eJ",
-  ]
+  const podcastIds: string[] = PODCAST_IDs
   const maxResults: number = 10
 
   useEffect(() => {
@@ -42,7 +39,7 @@ const Display = () => {
     }
 
     fetchPodcasts()
-  }, [podcastIds, maxResults])
+  }, [])
 
   return (
     <div>
