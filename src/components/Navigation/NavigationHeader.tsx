@@ -2,14 +2,14 @@
 import Link from "next/link"
 import Image from "next/image"
 import NavigationBar from "./NavigationBar"
-import useAuth from "../../hooks/useAuth"
-import styles from "./navigation.module.css"
-import Logo from "../../../public/images/logos/logo_tc.png"
+import useAuth from "@/hooks/useAuth"
+import Logo from "@public/images/logos/logo_tc.png"
+
 const NavigationHeader = () => {
-  const { token, user } = useAuth()
+  const { user } = useAuth()
 
   return (
-    <div className={`${styles.mobile_nav} ${styles.nav}`}>
+    <div className="fixed bottom-10 z-40 left-1/2 transform -translate-x-1/2 md:relative md:bottom-0 md:z-0 md:left-auto md:transform-none">
       <div className="container mx-auto flex justify-between items-center py-2 ">
         <NavigationBar />
         <Image
@@ -17,21 +17,19 @@ const NavigationHeader = () => {
           alt="true crime logo"
           width={150}
           height={120}
-          className={styles.logo}
+          className="md:block hidden"
         />
         <div className="hidden md:flex md:relative items-center ">
           <div className="ml-auto mr-4">
-            {token ? (
+            {user ? (
               <Link href="/profile" className="text-xl text-white">
-                {user ? (
-                  <Image
-                    src={user.avatar}
-                    alt="User Avatar"
-                    width={50}
-                    height={50}
-                    className="rounded-full border-2"
-                  />
-                ) : null}
+                <Image
+                  src={user.avatar}
+                  alt="User Avatar"
+                  width={50}
+                  height={50}
+                  className="rounded-full border-2"
+                />
               </Link>
             ) : (
               <Link href="/login" className="text-xl text-white">
@@ -42,7 +40,7 @@ const NavigationHeader = () => {
         </div>
       </div>
       <div className="hidden md:flex md:relative items-center">
-        <hr className=" lg:visible border-t-1 border-white w-10/12 mx-auto opacity-100" />
+        <hr className="lg:visible border-t-1 border-white w-10/12 mx-auto opacity-100" />
       </div>
     </div>
   )
