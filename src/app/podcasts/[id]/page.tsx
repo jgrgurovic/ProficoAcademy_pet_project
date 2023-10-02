@@ -9,7 +9,7 @@ import {
   formatMillisecondsToMinutesAndSeconds,
   DateFormats,
 } from "@utils/static/formatDate"
-import { PodcastEpisode } from "@utils/static/fetchPodcastsFromSpotify"
+import { PodcastEpisode } from "types/interfaces/interface"
 import { SpotifyService } from "@/services/SpotifyService"
 
 const EpisodePage = () => {
