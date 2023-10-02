@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import YoutubeLogo from "/public/images/logos/YouTube-White-Dark-Background-Logo.wine.svg"
 import { formatDate, DateFormats } from "@utils/static/formatDate"
-import { VideoItem } from "@utils/static/fetchVideosFromYouTubers"
+import { VideoItem } from "types/interfaces/interface"
 import { YoutubeService } from "@/services/YoutubeService"
 
 const VideoPage = () => {
