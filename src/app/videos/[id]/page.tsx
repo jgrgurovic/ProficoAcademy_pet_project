@@ -44,48 +44,48 @@ const VideoPage = () => {
     ? formatDate(video.snippet.publishedAt, DateFormats.fullNumericalDate)
     : ""
 
+  if (!video) {
+    return <p>Loading episode data...</p>
+  }
+
   return (
-    <div>
-      {!video ? (
-        <p>Loading video data...</p>
-      ) : (
-        <div className="group rounded-xl shadow-md flex flex-row overflow-hidden justify-center my-20">
-          <div className="relative w-1/3">
+    <>
+      <div className="group rounded-xl shadow-md flex flex-row overflow-hidden justify-center my-20">
+        <div className="relative w-1/3">
+          <Image
+            src={video.snippet.thumbnails.standard.url}
+            alt={video.snippet.title}
+            layout="responsive"
+            width={284}
+            height={158}
+            objectFit="cover"
+            objectPosition="center top"
+            className="rounded-t-xl "
+          />
+        </div>
+        <div className="px-4 w-1/2">
+          <div>
             <Image
-              src={video.snippet.thumbnails.standard.url}
-              alt={video.snippet.title}
-              layout="responsive"
-              width={284}
-              height={158}
-              objectFit="cover"
-              objectPosition="center top"
-              className="rounded-t-xl "
+              src={YoutubeLogo}
+              alt="youtube logo"
+              width={106}
+              height={40}
             />
           </div>
-          <div className="px-4 w-1/2">
-            <div>
-              <Image
-                src={YoutubeLogo}
-                alt="youtube logo"
-                width={106}
-                height={40}
-              />
-            </div>
-            <h1 className="text-2xl font-semibold text-white mb-2">
-              {displayedTitle}
-            </h1>
-            <span className="bg-mainRed text-white rounded-full px-3 py-1 text-md font-semibold mr-2">
-              {video.snippet.channelTitle}
-            </span>
-            <div className="flex-grow mt-4">
-              <p className="text-gray-300 mb-4">
-                Published At: {formattedPublicationDate}
-              </p>
-            </div>
+          <h1 className="text-2xl font-semibold text-white mb-2">
+            {displayedTitle}
+          </h1>
+          <span className="bg-mainRed text-white rounded-full px-3 py-1 text-md font-semibold mr-2">
+            {video.snippet.channelTitle}
+          </span>
+          <div className="flex-grow mt-4">
+            <p className="text-gray-300 mb-4">
+              Published At: {formattedPublicationDate}
+            </p>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   )
 }
 

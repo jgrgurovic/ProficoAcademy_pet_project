@@ -1,5 +1,5 @@
 import React from "react"
-import { PodcastEpisode } from "../../../utils/static/fetchPodcastsFromSpotify"
+import { PodcastEpisode } from "types/interfaces/interface"
 import PodcastEpisodeCard from "./PodcastEpisodeCard"
 
 interface PodcastListProps {

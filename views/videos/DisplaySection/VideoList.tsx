@@ -1,5 +1,5 @@
 import React from "react"
-import { VideoItem } from "../../../utils/static/fetchVideosFromYouTubers"
+import { VideoItem } from "types/interfaces/interface"
 import VideoCard from "./VideoCard"
 
 interface VideoListProps {

@@ -13,6 +13,7 @@ export const YOUTUBER_HEADERS = {
 export const PLAYLIST_IDs = [
   "PLCprSpAj-wvAf6l9ulK_2B_4BrHJM4j1s",
   "PLcFHkKbd_jTJiRmfUfLX2Ay_hnf5j3cxH",
+  "PLoes2SLijGt1lBIbdC-X8uQEZkrdYv5_7",
 ]
 
 export const PODCAST_IDs = [
@@ -20,3 +21,5 @@ export const PODCAST_IDs = [
   "4t4nuhMponRkNpX6xKFVNZ",
   "4d6RwH9XKnZ6osfNVc26eJ",
 ]
+
+export const MAX_RESULTS = 10

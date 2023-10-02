@@ -1,30 +1,27 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import VideoList from "./VideoList"
-import {
-  fetchVideosFromPlaylists,
-  VideoItem,
-} from "@utils/static/fetchVideosFromYouTubers"
-import { PLAYLIST_IDs } from "config/constants"
+import { VideoItem } from "types/interfaces/interface"
+import { YoutubeService } from "@/services/YoutubeService"
+import { PLAYLIST_IDs, MAX_RESULTS } from "config/constants"
 
 const Display = () => {
   const [videos, setVideos] = useState<VideoItem[]>([])
-  const playlistIds = PLAYLIST_IDs
-  const maxResults = 10
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const allVideos: VideoItem[] = []
-
-        for (const playlistId of playlistIds) {
-          const videosFromPlaylists: VideoItem[] =
-            await fetchVideosFromPlaylists([playlistId], maxResults)
-
-          allVideos.push(...videosFromPlaylists)
-        }
-
-        console.log("Fetched videos:", allVideos)
+        const youtubeService = new YoutubeService()
+        const allVideos = await youtubeService.fetchVideosFromPlaylists(
+          PLAYLIST_IDs,
+          MAX_RESULTS
+        )
+        allVideos.sort((a, b) => {
+          return (
+            new Date(b.snippet.publishedAt).getTime() -
+            new Date(a.snippet.publishedAt).getTime()
+          )
+        })
         setVideos(allVideos)
       } catch (error) {
         console.error("Error fetching videos:", error)

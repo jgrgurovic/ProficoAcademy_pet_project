@@ -1,6 +1,6 @@
 import axios from "axios"
 import { YOUTUBER_HEADERS } from "config/constants"
-import { VideoItem } from "@utils/static/fetchVideosFromYouTubers"
+import { VideoItem } from "types/interfaces/interface"
 export class YoutubeService {
   async fetchVideo(id: string) {
     try {

@@ -1,29 +1,25 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import PodcastList from "./PodcastList"
-import {
-  PodcastEpisode,
-  fetchPodcastEpisodes,
-} from "@utils/static/fetchPodcastsFromSpotify"
-import { PODCAST_IDs } from "config/constants"
+import { PodcastEpisode } from "types/interfaces/interface"
+import { SpotifyService } from "@/services/SpotifyService"
+import { PODCAST_IDs, MAX_RESULTS } from "config/constants"
 
 const Display = () => {
   const [podcastEpisodes, setPodcastEpisodes] = useState<PodcastEpisode[]>([])
   const podcastIds: string[] = PODCAST_IDs
-  const maxResults: number = 10
 
   useEffect(() => {
     console.log("Fetching podcast episodes...")
 
     const fetchPodcasts = async () => {
       try {
+        const spotifyService = new SpotifyService()
         const allPodcastEpisodes: PodcastEpisode[] = []
 
         for (const podcastId of podcastIds) {
-          const podcastEpisodes: PodcastEpisode[] = await fetchPodcastEpisodes(
-            podcastId,
-            maxResults
-          )
+          const podcastEpisodes: PodcastEpisode[] =
+            await spotifyService.fetchPodcastEpisodes(podcastId, MAX_RESULTS)
           allPodcastEpisodes.push(...podcastEpisodes)
         }
         allPodcastEpisodes.sort((a, b) => {
