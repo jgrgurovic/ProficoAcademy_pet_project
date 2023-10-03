@@ -1,5 +1,6 @@
+"use client"
 import Api from "@/api"
-import { User } from "../db"
+import { User } from "@/db"
 import { useEffect, useState } from "react"
 
 export enum UseUserError {
@@ -13,30 +14,29 @@ const useAuth = () => {
   const [error, setError] = useState<UseUserError | null>(null)
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    
+    const token = localStorage.getItem("token")
+
     if (!token) {
-      setLoading(false);
-      setError(UseUserError.Unknown);
-      return;
+      setLoading(false)
+      setError(UseUserError.Unknown)
+      return
     }
-  
+
     Api.getInstance
-    .self(token)
-    .then((data) => {
-      console.log("API Success:", data);
-      setUser(data.user);
-      setLoading(false);
-    })
-    .catch((error) => {
-      console.error("API Error:", error);
-      setError(UseUserError.Unauthorized);
-      setLoading(false);
-    });
-  
-  }, []);
-  
+      .self(token)
+      .then((data) => {
+        console.log("API Success:", data)
+        setUser(data.user)
+        setLoading(false)
+      })
+      .catch((error) => {
+        console.error("API Error:", error)
+        setError(UseUserError.Unauthorized)
+        setLoading(false)
+      })
+  }, [])
+
   return { user, loading, error }
 }
 
-export default useAuth;
+export default useAuth
