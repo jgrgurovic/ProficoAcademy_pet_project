@@ -2,7 +2,7 @@ import React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import SpotifyLogo from "@public/images/logos/spotify-logo.svg"
-import { PodcastEpisode } from "types/interfaces/interface"
+import { PodcastEpisode } from "types/interfaces/PodcastEpisode"
 
 interface PodcastEpisodeCardProps {
   episode: PodcastEpisode

@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import VideoList from "./VideoList"
-import { VideoItem } from "types/interfaces/interface"
+import { VideoItem } from "types/interfaces/VideoItem"
 import { YoutubeService } from "@/services/YoutubeService"
 import { PLAYLIST_IDs, MAX_RESULTS } from "config/constants"
 

@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import PodcastList from "./PodcastList"
-import { PodcastEpisode } from "types/interfaces/interface"
+import { PodcastEpisode } from "types/interfaces/PodcastEpisode"
 import { SpotifyService } from "@/services/SpotifyService"
 import { PODCAST_IDs, MAX_RESULTS } from "config/constants"
 

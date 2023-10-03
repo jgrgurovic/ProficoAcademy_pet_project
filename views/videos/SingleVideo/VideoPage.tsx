@@ -1,6 +1,6 @@
 import React from "react"
 import VideoPlayer from "./VideoPlayer"
-import { VideoItem } from "types/interfaces/interface"
+import { VideoItem } from "types/interfaces/VideoItem"
 
 interface VideoPageProps {
   video: VideoItem

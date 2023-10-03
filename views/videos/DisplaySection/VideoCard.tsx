@@ -1,5 +1,5 @@
 import React from "react"
-import { VideoItem } from "types/interfaces/interface"
+import { VideoItem } from "types/interfaces/VideoItem"
 import Link from "next/link"
 import Image from "next/image"
 import PlayButton from "@public/images/logos/youtube-color-svgrepo-com.svg"

@@ -1,5 +1,5 @@
 import React from "react"
-import { VideoItem } from "types/interfaces/interface"
+import { VideoItem } from "types/interfaces/VideoItem"
 import VideoCard from "./VideoCard"
 
 interface VideoListProps {
