@@ -23,7 +23,7 @@
       "@/*": ["./src/*"],
       "@views/*": ["./views/*"],
       "@utils/*": ["./utils/*"],
-      "@public/*": ["./public/*"]
+      "@public/*": ["./public/*"],
       "@hooks/*": ["./hooks/*"],
       "@config/*": ["./config/*"]
     }
