@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import navTabs from "@config/navbar"
 
+
 const NavigationBar = () => {
   const pathname = usePathname()
 

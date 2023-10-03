@@ -18,13 +18,20 @@ const config: Config = {
         mainRed: "#ac0000",
       },
       mixBlendMode: {
-        difference: 'difference', 
+        difference: "difference",
       },
       backgroundColor: {
-        'red': "#ac0000"
+        red: "#ac0000",
+      },
+      backdropBlur: {
+        sm: "4px",
+        md: "8px",
+        lg: "12px",
+        xl: "16px",
       },
     },
   },
   plugins: [],
 }
+
 export default config
