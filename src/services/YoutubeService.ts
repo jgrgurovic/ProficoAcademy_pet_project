@@ -1,6 +1,7 @@
 import axios from "axios"
 import { YOUTUBER_HEADERS } from "config/constants"
 import { VideoItem } from "types/interfaces/VideoItem"
+
 export class YoutubeService {
   async fetchVideo(id: string) {
     try {
@@ -37,7 +38,9 @@ export class YoutubeService {
 
   async fetchVideosFromPlaylists(
     playlistIds: string[],
-    maxResults: number
+    maxResults: number,
+    page: number,
+    perPage: number
   ): Promise<VideoItem[]> {
     try {
       const part: string = "snippet"
@@ -51,6 +54,8 @@ export class YoutubeService {
               playlistId: playlistId,
               part: part,
               maxResults: maxResults,
+              page: page,
+              perPage: perPage,
             },
             headers: YOUTUBER_HEADERS,
           }

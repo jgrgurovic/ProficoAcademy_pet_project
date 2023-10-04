@@ -20,7 +20,12 @@ export class SpotifyService {
     }
   }
 
-  async fetchPodcastEpisodes(podcastId: string, maxResults: number) {
+  async fetchPodcastEpisodes(
+    podcastId: string,
+    maxResults: number,
+    page: number,
+    perPage: number
+  ) {
     try {
       const options = {
         method: "GET",
@@ -29,6 +34,8 @@ export class SpotifyService {
           id: podcastId,
           offset: "0",
           limit: maxResults.toString(),
+          page: page,
+          perPage: perPage,
         },
         headers: SPOTIFY_HEADERS,
       }
