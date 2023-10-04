@@ -31,7 +31,7 @@ const Display = () => {
           currentPage,
           itemsPerPage
         )
-        console.log("Received videos:", allVideos.length)
+
         allVideos.sort((a, b) => {
           return (
             new Date(b.snippet.publishedAt).getTime() -
