@@ -26,6 +26,7 @@ export interface PodcastEpisode {
   uid: string
   podcastV2: {
     data: {
+      uri: string
       name: string
       coverArt: string
     }
