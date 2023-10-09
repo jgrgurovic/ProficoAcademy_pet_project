@@ -18,8 +18,8 @@ const PodcastList: React.FC<PodcastListProps> = ({
   const episodesToDisplay = episodes.slice(startIndex, endIndex)
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-x-16 gap-y-24 m-24 ">
-      {episodesToDisplay.map((episode, index) => (
-        <PodcastEpisodeCard key={index} episode={episode} />
+      {episodesToDisplay.map((episode) => (
+        <PodcastEpisodeCard key={episode.id} episode={episode} />
       ))}
     </div>
   )

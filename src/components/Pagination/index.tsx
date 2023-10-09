@@ -1,4 +1,6 @@
-import React, { FC } from "react"
+import React, { FC, useMemo } from "react"
+import { MAX_VISIBLE_PAGES } from "@config/constants"
+import { compute } from "@utils/static/compute"
 
 interface PaginationProps {
   page?: number | null
@@ -6,7 +8,6 @@ interface PaginationProps {
   totalItems: number
   setPagination: (pagination: { page?: number; perPage?: number }) => void
   onPageChange: (newPage: number) => void
-  maxVisiblePages?: number
 }
 
 const Pagination: FC<PaginationProps> = ({
@@ -15,10 +16,10 @@ const Pagination: FC<PaginationProps> = ({
   totalItems,
   setPagination,
   onPageChange,
-  maxVisiblePages = 4,
 }) => {
   if (!page || !perPage) return null
 
+  const maxVisiblePages = MAX_VISIBLE_PAGES
   const totalPages = Math.ceil(totalItems / perPage)
 
   const handlePageChange = (newPage: number) => {
@@ -26,15 +27,23 @@ const Pagination: FC<PaginationProps> = ({
     onPageChange(newPage)
   }
 
-  const renderPageNumbers = () => {
+  const renderPageNumbers = useMemo(() => {
     const pageNumbers = []
     const halfMaxVisiblePages = Math.floor(maxVisiblePages / 2)
-    let startPage = Math.max(page - halfMaxVisiblePages, 1)
-    let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages)
+    const [startPage, endPage] = compute<[number, number]>(() => {
+      const halfPoint = Math.max(page - halfMaxVisiblePages, 1)
+      const lastPage = maxVisiblePages - 1
+      const calculatedEndPage = Math.min(
+        halfPoint + maxVisiblePages - 1,
+        totalPages
+      )
+      const calculatedStartPage =
+        calculatedEndPage - halfPoint < lastPage
+          ? Math.max(calculatedEndPage - maxVisiblePages + 1, 1)
+          : halfPoint
 
-    if (endPage - startPage < maxVisiblePages - 1) {
-      startPage = Math.max(endPage - maxVisiblePages + 1, 1)
-    }
+      return [calculatedStartPage, calculatedEndPage]
+    })
 
     if (startPage > 1) {
       pageNumbers.push(
@@ -51,7 +60,8 @@ const Pagination: FC<PaginationProps> = ({
       }
     }
 
-    for (let i = startPage; i <= endPage; i++) {
+    Array.from({ length: endPage - startPage + 1 }).forEach((_, index) => {
+      const i = startPage + index
       pageNumbers.push(
         <button
           key={i}
@@ -64,7 +74,7 @@ const Pagination: FC<PaginationProps> = ({
           {i}
         </button>
       )
-    }
+    })
 
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
@@ -82,7 +92,7 @@ const Pagination: FC<PaginationProps> = ({
     }
 
     return pageNumbers
-  }
+  }, [page, totalItems])
 
   return (
     <div className="flex items-center justify-center mt-4">
@@ -94,7 +104,7 @@ const Pagination: FC<PaginationProps> = ({
         }`}>
         Previous
       </button>
-      {renderPageNumbers()}
+      {renderPageNumbers}
       <button
         onClick={() => handlePageChange(page + 1)}
         disabled={page >= totalPages}

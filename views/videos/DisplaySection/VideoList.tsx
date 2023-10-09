@@ -19,9 +19,14 @@ const VideoList: React.FC<VideoListProps> = ({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-x-16 gap-y-24 m-24 ">
-      {videosToDisplay.map((video) => (
-        <VideoCard key={video.snippet.resourceId.videoId} video={video} />
-      ))}
+      {videosToDisplay.map((video) => {
+        const {
+          snippet: {
+            resourceId: { videoId },
+          },
+        } = video
+        return <VideoCard key={videoId} video={video} />
+      })}
     </div>
   )
 }

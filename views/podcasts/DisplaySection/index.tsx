@@ -6,6 +6,7 @@ import { SpotifyService } from "@/services/SpotifyService"
 import { PODCAST_IDs, MAX_RESULTS } from "config/constants"
 import Pagination from "@/components/Pagination"
 import { NumberParam, useQueryParams } from "use-query-params"
+import { MAX_PER_PAGE_SPOTIFY } from "config/constants"
 
 const Display = () => {
   const [podcastEpisodes, setPodcastEpisodes] = useState<PodcastEpisode[]>([])
@@ -20,7 +21,7 @@ const Display = () => {
   }
 
   const currentPage = pagination.page || 1
-  const itemsPerPage = pagination.perPage || 8
+  const itemsPerPage = pagination.perPage || MAX_PER_PAGE_SPOTIFY
 
   useEffect(() => {
     console.log("Fetching podcast episodes...")
@@ -60,11 +61,11 @@ const Display = () => {
       <PodcastList
         episodes={podcastEpisodes}
         currentPage={pagination.page || 1}
-        itemsPerPage={pagination.perPage || 8}
+        itemsPerPage={pagination.perPage || MAX_PER_PAGE_SPOTIFY}
       />
       <Pagination
         page={pagination.page || 1}
-        perPage={pagination.perPage || 8}
+        perPage={pagination.perPage || MAX_PER_PAGE_SPOTIFY}
         setPagination={setPagination}
         onPageChange={handlePageChange}
         totalItems={podcastEpisodes.length}

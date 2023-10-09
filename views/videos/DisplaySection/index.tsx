@@ -6,6 +6,7 @@ import { YoutubeService } from "@/services/YoutubeService"
 import { PLAYLIST_IDs, MAX_RESULTS } from "config/constants"
 import Pagination from "@/components/Pagination"
 import { NumberParam, useQueryParams } from "use-query-params"
+import { MAX_PER_PAGE_YOUTUBE } from "config/constants"
 
 const Display = () => {
   const [videos, setVideos] = useState<VideoItem[]>([])
@@ -19,7 +20,7 @@ const Display = () => {
   }
 
   const currentPage = pagination.page || 1
-  const itemsPerPage = pagination.perPage || 9
+  const itemsPerPage = pagination.perPage || MAX_PER_PAGE_YOUTUBE
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -52,11 +53,11 @@ const Display = () => {
       <VideoList
         videos={videos}
         currentPage={pagination.page || 1}
-        itemsPerPage={pagination.perPage || 9}
+        itemsPerPage={pagination.perPage || MAX_PER_PAGE_YOUTUBE}
       />
       <Pagination
         page={pagination.page || 1}
-        perPage={pagination.perPage || 9}
+        perPage={pagination.perPage || MAX_PER_PAGE_YOUTUBE}
         setPagination={setPagination}
         onPageChange={handlePageChange}
         totalItems={videos.length}
