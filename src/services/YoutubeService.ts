@@ -1,6 +1,9 @@
 import axios from "axios"
 import { YOUTUBER_HEADERS } from "config/constants"
 import { VideoItem } from "types/interfaces/VideoItem"
+import { getDatabase, ref, set, get } from "firebase/database"
+import firebaseApp from "@config/firebase"
+
 export class YoutubeService {
   async fetchVideo(id: string) {
     try {
@@ -34,14 +37,25 @@ export class YoutubeService {
       throw error
     }
   }
-
   async fetchVideosFromPlaylists(
     playlistIds: string[],
-    maxResults: number
+    maxResults: number,
+    page: number,
+    perPage: number
   ): Promise<VideoItem[]> {
     try {
       const part: string = "snippet"
       const allVideos: VideoItem[] = []
+      const firebaseVideos: VideoItem[] = []
+
+      const db = getDatabase(firebaseApp)
+      const videosRef = ref(db, "data/content")
+      const existingVideosSnapshot = await get(videosRef)
+      const existingVideos: VideoItem[] = existingVideosSnapshot.val() || []
+
+      const existingVideoIds = new Set(
+        existingVideos.map((video) => video.snippet.resourceId.videoId)
+      )
 
       for (const playlistId of playlistIds) {
         const response = await axios.get(
@@ -51,12 +65,23 @@ export class YoutubeService {
               playlistId: playlistId,
               part: part,
               maxResults: maxResults,
+              page: page,
+              perPage: perPage,
             },
             headers: YOUTUBER_HEADERS,
           }
         )
 
         const videos: VideoItem[] = response.data.items
+
+        for (const video of videos) {
+          const videoId = video.snippet.resourceId.videoId
+
+          if (!existingVideoIds.has(videoId)) {
+            firebaseVideos.push(video)
+            existingVideoIds.add(videoId)
+          }
+        }
 
         const uniqueVideos = videos.filter(
           (video, index, self) =>
@@ -69,6 +94,10 @@ export class YoutubeService {
         )
 
         allVideos.push(...uniqueVideos)
+      }
+
+      if (firebaseVideos.length > existingVideos.length) {
+        await set(videosRef, firebaseVideos)
       }
 
       console.log("Fetched videos:", allVideos)

@@ -1,5 +1,8 @@
 import axios from "axios"
+import { getDatabase, ref, set, get } from "firebase/database"
+import firebaseApp from "@config/firebase"
 import { SPOTIFY_HEADERS } from "config/constants"
+import { PodcastEpisode } from "types/interfaces/PodcastEpisode"
 
 export class SpotifyService {
   async fetchEpisode(id: string) {
@@ -20,8 +23,23 @@ export class SpotifyService {
     }
   }
 
-  async fetchPodcastEpisodes(podcastId: string, maxResults: number) {
+  async fetchPodcastEpisodes(
+    podcastId: string,
+    maxResults: number
+  ): Promise<any[]> {
     try {
+      const firebaseEpisodes: PodcastEpisode[] = []
+      const db = getDatabase(firebaseApp)
+      const episodesRef = ref(db, "data/podcasts/episodes")
+      const existingEpisodesSnapshot = await get(episodesRef)
+      const existingEpisodes: PodcastEpisode[] =
+        existingEpisodesSnapshot.val() || []
+      console.log("Existing episodes:", existingEpisodes)
+
+      const existingEpisodeIds = new Set(
+        existingEpisodes.map((episodeData) => episodeData.id)
+      )
+      
       const options = {
         method: "GET",
         url: "https://spotify23.p.rapidapi.com/podcast_episodes/",
@@ -37,7 +55,7 @@ export class SpotifyService {
       const episodesData =
         response.data.data?.podcastUnionV2?.episodesV2?.items || []
 
-      const podcastEpisodes = episodesData.map((episodeData: any) => {
+      const podcastEpisodes: any[] = episodesData.map((episodeData: any) => {
         const audioItems = episodeData.entity?.data?.audio?.items || []
         const audioUrl = audioItems.length > 0 ? audioItems[0]?.url || "" : ""
 
@@ -54,7 +72,7 @@ export class SpotifyService {
           .split("T")[0]
 
         return {
-          id: episodeData.entity?.data?.id,
+          id: episodeData.entity?.data?.id || "N/A",
           title: episodeData.entity?.data?.name || "N/A",
           description: episodeData.entity?.data?.description || "N/A",
           audioUrl: audioUrl,
@@ -67,7 +85,22 @@ export class SpotifyService {
         }
       })
 
+      for (const podcastEpisode of podcastEpisodes) {
+        const episodeID = podcastEpisode.id
+        if (!existingEpisodeIds.has(episodeID)) {
+          firebaseEpisodes.push(podcastEpisode)
+          existingEpisodeIds.add(episodeID)
+        }
+      }
+
+      if (firebaseEpisodes.length > 0) {
+        const updatedEpisodes = existingEpisodes.concat(firebaseEpisodes)
+        await set(episodesRef, updatedEpisodes)
+        console.log("Firebase episodes:", updatedEpisodes)
+      }
+
       console.log("Fetched podcast episodes:", podcastEpisodes)
+
       return podcastEpisodes
     } catch (error) {
       console.error("Error fetching podcast episodes:", error)

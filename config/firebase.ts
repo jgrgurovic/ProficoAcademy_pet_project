@@ -1,6 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app"
-import { getAnalytics } from "firebase/analytics"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -9,6 +8,8 @@ import { getAnalytics } from "firebase/analytics"
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: "truecrime-6f10f.firebaseapp.com",
+  databaseURL:
+    "https://truecrime-6f10f-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "truecrime-6f10f",
   storageBucket: "truecrime-6f10f.appspot.com",
   messagingSenderId: "597261748863",
@@ -17,5 +18,6 @@ const firebaseConfig = {
 }
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig)
-const analytics = getAnalytics(app)
+const firebaseApp = initializeApp(firebaseConfig)
+
+export default firebaseApp
