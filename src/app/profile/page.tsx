@@ -23,7 +23,7 @@ const ProfilePage = () => {
     localStorage.removeItem("token")
     window.location.href = "/login"
   }
-
+  const [firstName, lastName] = user.name.split(" ")
   return (
     <section className="font-medium flex flex-col">
       <section className="relative bg-black/20 w h-1/2 rounded-2xl m-12 shadow-2xl">
@@ -39,7 +39,7 @@ const ProfilePage = () => {
           </div>
           <div className="ml-8">
             <h2 className="text-white font-bold text-5xl tracking-wide leading-relaxed">
-              {user.name.split(" ")[0]} <br /> {user.name.split(" ")[1]}
+              {firstName} <br /> {lastName}
             </h2>
           </div>
         </div>
