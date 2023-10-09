@@ -17,10 +17,11 @@ const Pagination: FC<PaginationProps> = ({
   setPagination,
   onPageChange,
 }) => {
-  if (!page || !perPage) return null
+  const currentPage: number = page ?? 1
+  const itemsPerPage: number = perPage ?? 9
 
   const maxVisiblePages = MAX_VISIBLE_PAGES
-  const totalPages = Math.ceil(totalItems / perPage)
+  const totalPages = Math.ceil(totalItems / itemsPerPage)
 
   const handlePageChange = (newPage: number) => {
     setPagination({ page: newPage })
@@ -31,7 +32,7 @@ const Pagination: FC<PaginationProps> = ({
     const pageNumbers = []
     const halfMaxVisiblePages = Math.floor(maxVisiblePages / 2)
     const [startPage, endPage] = compute<[number, number]>(() => {
-      const halfPoint = Math.max(page - halfMaxVisiblePages, 1)
+      const halfPoint = Math.max(currentPage - halfMaxVisiblePages, 1)
       const lastPage = maxVisiblePages - 1
       const calculatedEndPage = Math.min(
         halfPoint + maxVisiblePages - 1,
@@ -97,19 +98,19 @@ const Pagination: FC<PaginationProps> = ({
   return (
     <div className="flex items-center justify-center mt-4">
       <button
-        onClick={() => handlePageChange(page - 1)}
-        disabled={page <= 1}
+        onClick={() => handlePageChange(currentPage - 1)}
+        disabled={currentPage <= 1}
         className={`px-4 py-2 mx-2 bg-black/20 text-white rounded-full hover:bg-black/60 ${
-          page <= 1 ? "disabled:invisible" : ""
+          currentPage <= 1 ? "disabled:invisible" : ""
         }`}>
         Previous
       </button>
       {renderPageNumbers}
       <button
-        onClick={() => handlePageChange(page + 1)}
-        disabled={page >= totalPages}
+        onClick={() => handlePageChange(currentPage + 1)}
+        disabled={currentPage >= totalPages}
         className={`px-4 py-2 mx-2 bg-black/20 text-white rounded-full hover:bg-black/60 ${
-          page >= totalPages ? "disabled:invisible" : ""
+          currentPage >= totalPages ? "disabled:invisible" : ""
         }`}>
         Next
       </button>
