@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import Image from "next/image"
+import Link from "next/link"
 import {
   FaThumbsUp,
   FaThumbsDown,
   FaBookmark,
   FaRegBookmark,
 } from "react-icons/fa"
+import { showToast } from "@/components/toastMessage"
 import YoutubeLogo from "/public/images/logos/YouTube-White-Dark-Background-Logo.wine.svg"
 import { formatDate, DateFormats } from "@utils/static/formatDate"
 import { VideoItem } from "types/interfaces/VideoItem"
@@ -23,7 +25,7 @@ import useAuth from "@/hooks/useAuth"
 const db = getDatabase(firebaseApp)
 
 const VideoPage = () => {
-  const { user,loading } = useAuth()
+  const { user, loading } = useAuth()
   const pathname = usePathname()
   const idSegment = pathname.split("/").pop()
   const id = idSegment || ""
@@ -57,7 +59,7 @@ const VideoPage = () => {
           const dislikesRef = ref(db, `data/videos/interactions/dislikes/${id}`)
           const dislikeStatusSnapshot = await get(dislikesRef)
           const dislikeStatus = dislikeStatusSnapshot.val() || {}
-      
+
           const bookmarkRef = ref(db, `data/users/${user?.id}/bookmarks/${id}`)
           const bookmarkStatusSnapshot = await get(bookmarkRef)
           const isBookmarkedFromFirebase = bookmarkStatusSnapshot.exists()
@@ -76,7 +78,7 @@ const VideoPage = () => {
     }
 
     fetchVideo()
-  }, [id,user])
+  }, [id, user])
 
   const videoTitle = video?.snippet?.title || ""
   const titleParts = videoTitle.split("|")
@@ -89,11 +91,20 @@ const VideoPage = () => {
   if (!video) {
     return <p>Loading episode data...</p>
   }
-  if (!user || loading) {
-    return <p>User is not logged in</p>
-  }
 
   const handleThumbsUpClick = async () => {
+    if (!user) {
+      showToast(
+        <>
+          Please{" "}
+          <Link href="/login" className="underline">
+            log in
+          </Link>{" "}
+          to like the video.
+        </>
+      )
+      return
+    }
     const userId = user.id
     const videoId = id
 
@@ -120,19 +131,25 @@ const VideoPage = () => {
     setDislikeStatus(updatedDislikeStatus)
 
     try {
-      await likeVideo(
-        videoId,
-        userId,
-        "like",
-        likeCount,
-        dislikeCount
-      )
+      await likeVideo(videoId, userId, "like", likeCount, dislikeCount)
     } catch (error) {
       console.error("Error toggling like:", error)
     }
   }
 
   const handleThumbsDownClick = async () => {
+    if (!user) {
+      showToast(
+        <>
+          Please{" "}
+          <Link href="/login" className="underline">
+            log in
+          </Link>{" "}
+          to dislike the video.
+        </>
+      )
+      return
+    }
     const userId = user.id
     const videoId = id
 
@@ -156,19 +173,25 @@ const VideoPage = () => {
     setDislikeStatus(updatedDislikeStatus)
 
     try {
-      await likeVideo(
-        videoId,
-        userId,
-        "dislike",
-        likeCount,
-        dislikeCount
-      )
+      await likeVideo(videoId, userId, "dislike", likeCount, dislikeCount)
     } catch (error) {
       console.error("Error toggling dislike:", error)
     }
   }
 
   const handleBookmarkClick = async () => {
+    if (!user) {
+      showToast(
+        <>
+          Please{" "}
+          <Link href="/login" className="underline">
+            log in
+          </Link>{" "}
+          to bookmark the video.
+        </>
+      )
+      return
+    }
     const userId = user.id
     if (!userId || !id) {
       console.error("User bookmarkID is missing")

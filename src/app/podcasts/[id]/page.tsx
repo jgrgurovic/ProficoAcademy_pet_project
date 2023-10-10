@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import useAuth from "@/hooks/useAuth"
 import Image from "next/image"
+import Link from "next/link"
 import {
   FaThumbsUp,
   FaThumbsDown,
@@ -16,6 +17,7 @@ import {
   formatMillisecondsToMinutesAndSeconds,
   DateFormats,
 } from "@utils/static/formatDate"
+import { showToast } from "@/components/toastMessage"
 import { PodcastEpisode } from "types/interfaces/PodcastEpisode"
 import { SpotifyService } from "@/services/SpotifyService"
 import { likeEpisode } from "@utils/static/likePodcasts"
@@ -27,7 +29,7 @@ import { toggleBookmark } from "@utils/static/bookmarkItems"
 const db = getDatabase(firebaseApp)
 
 const EpisodePage = () => {
-  const { user,loading } = useAuth()
+  const { user } = useAuth()
   const pathname = usePathname()
   const idSegment = pathname.split("/").pop()
   const id = idSegment || ""
@@ -82,7 +84,7 @@ const EpisodePage = () => {
     }
 
     fetchData()
-  }, [id,user])
+  }, [id, user])
 
   const formattedPublicationDate = episode?.releaseDate
     ? formatDate(episode.releaseDate.isoString, DateFormats.fullNumericalDate)
@@ -95,11 +97,19 @@ const EpisodePage = () => {
     return <p>Loading episode data...</p>
   }
 
-  if (!user || loading) {
-    return <p>User is not logged in</p>
-  }
-
   const handleThumbsUpClick = async () => {
+    if (!user) {
+      showToast(
+        <>
+          Please{" "}
+          <Link href="/login" className="underline">
+            log in
+          </Link>{" "}
+          to like the podcast episode.
+        </>
+      )
+      return
+    }
     const userId = user.id
     const episodeId = id
 
@@ -133,6 +143,18 @@ const EpisodePage = () => {
   }
 
   const handleThumbsDownClick = async () => {
+    if (!user) {
+      showToast(
+        <>
+          Please{" "}
+          <Link href="/login" className="underline">
+            log in
+          </Link>{" "}
+          to dislike the podcast episode.
+        </>
+      )
+      return
+    }
     const userId = user.id
     const episodeId = id
 
@@ -163,6 +185,18 @@ const EpisodePage = () => {
   }
 
   const handleBookmarkClick = async () => {
+    if (!user) {
+      showToast(
+        <>
+          Please{" "}
+          <Link href="/login" className="underline">
+            log in
+          </Link>{" "}
+          to bookmark the podcast episode.
+        </>
+      )
+      return
+    }
     const userId = user.id
     if (!userId || !id) {
       console.error("User or podcastID is missing")
