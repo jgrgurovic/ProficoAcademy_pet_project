@@ -9,6 +9,6 @@ export const showToast = (message: React.ReactNode) => {
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-    className: "bg-black/50 text-white rounded-3xl",
+    className: "text-white rounded-3xl",
   })
 }

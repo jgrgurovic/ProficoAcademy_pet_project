@@ -6,6 +6,7 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 0, 0, 0;
   --background-end-rgb: 0, 0, 0;
+  --toastify-color-light: rgba(0, 0, 0, 0.5);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -13,6 +14,7 @@
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
+    --toastify-color-light: rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -21,10 +23,6 @@ body {
   color: white;
   background-color: black;
   background: linear-gradient(270deg, #5d0006 30%, black 90%);
-  /* background-image: linear-gradient(270deg, #5d0006 60%, black 90%);
-  background-repeat: no-repeat;
-  background-size: 100% 100%; 
-  background-position: 0 440px;  */
 }
 
 @font-face {
