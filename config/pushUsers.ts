@@ -1,13 +1,14 @@
 const admin = require("firebase-admin")
 const fs = require("fs")
+require("dotenv").config()
 
-const serviceAccount = require("../serviceAccountKey.json")
+const firebaseServiceAccountKey = process.env
+  .FIREBASE_SERVICE_ACCOUNT_KEY as string
 const localUserData = JSON.parse(fs.readFileSync("../src/db.json", "utf8"))
 
 const firebaseConfig = {
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL:
-    "https://truecrime-6f10f-default-rtdb.europe-west1.firebasedatabase.app",
+  credential: admin.credential.cert(JSON.parse(firebaseServiceAccountKey)),
+  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
 }
 
 admin.initializeApp(firebaseConfig)
