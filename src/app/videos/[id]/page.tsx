@@ -3,11 +3,13 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { usePathname, useSearchParams } from "next/navigation"
 import Image from "next/image"
+import Link from "next/link"
 import YoutubeLogo from "/public/images/logos/YouTube-White-Dark-Background-Logo.wine.svg"
 import { formatDate, DateFormats } from "@utils/static/formatDate"
 import { splitSentences } from "@utils/static/splitSentence"
 import { VideoItem } from "types/interfaces/VideoItem"
 import { YoutubeService } from "@/services/YoutubeService"
+import { compute } from "@utils/static/compute"
 
 const VideoPage = () => {
   const router = useRouter()
@@ -48,15 +50,16 @@ const VideoPage = () => {
 
   const match = video?.contentDetails.duration.match(/PT(\d+)M(\d+)S/)
 
-  let minutes = 0
-  let seconds = 0
-
-  if (match) {
-    minutes = parseInt(match[1])
-    seconds = parseInt(match[2])
-  } else {
-    console.error("Invalid duration format")
-  }
+  const { minutes, seconds } = compute(() => {
+    if (match) {
+      return {
+        minutes: parseInt(match[1]),
+        seconds: parseInt(match[2]),
+      }
+    } else {
+      return { minutes: 0, seconds: 0 }
+    }
+  })
 
   if (!video) {
     return <p>Loading episode data...</p>
@@ -87,11 +90,13 @@ const VideoPage = () => {
           <h1 className="text-2xl font-semibold text-white mb-2 py-2">
             {displayedTitle}
           </h1>
-          <a href={`https://www.youtube.com/${channelTitle}`} target="_blank">
+          <Link
+            href={`https://www.youtube.com/${channelTitle}`}
+            target="_blank">
             <span className="bg-mainRed text-white rounded-full px-3 py-1 text-md font-semibold mr-2 mt-4">
               {channelTitle}
             </span>
-          </a>
+          </Link>
           <div className="flex-grow mt-4 mt-4">
             <p className="text-gray-300 my-2">
               Duration: {minutes} min {seconds} s
@@ -112,10 +117,10 @@ const VideoPage = () => {
         </h2>
         {isDescriptionVisible && (
           <div className="leading-normal mx-24 max-w-full bg-black/20 p-3 rounded-2xl">
-            {splitSentences(description).map((sentence, index) => (
+            {splitSentences(description).map((sentence) => (
               <p
-                key={index}
-                className="text-gray-100 text-xl mb-3 whitespace-normal break-words">
+                key={sentence}
+                className="text-gray-100 text-l mb-3 whitespace-normal break-words">
                 {sentence}
               </p>
             ))}

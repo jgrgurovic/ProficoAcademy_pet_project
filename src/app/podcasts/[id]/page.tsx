@@ -118,10 +118,10 @@ const EpisodePage = () => {
         </h2>
         {isDescriptionVisible && (
           <div className="leading-normal mx-24 max-w-full bg-black/20 p-3 rounded-2xl">
-            {splitSentences(description).map((sentence, index) => (
+            {splitSentences(description).map((sentence) => (
               <p
-                key={index}
-                className="text-gray-100 text-xl mb-3 whitespace-normal break-words">
+                key={sentence}
+                className="text-gray-100 text-l mb-3 whitespace-normal break-words">
                 {sentence}
               </p>
             ))}
