@@ -20,13 +20,10 @@ import {
 import { showToast } from "@/components/toastMessage"
 import { PodcastEpisode } from "types/interfaces/PodcastEpisode"
 import { SpotifyService } from "@/services/SpotifyService"
-import { likeEpisode } from "@utils/static/likePodcasts"
-import { ref, getDatabase, get } from "firebase/database"
-import firebaseApp from "@config/firebase"
 import fetchLikeCount from "@utils/static/fetchLikeCountPodcasts"
 import { toggleBookmark } from "@utils/static/bookmarkItems"
-
-const db = getDatabase(firebaseApp)
+import firebaseService from "@/services/FirebaseService"
+import interactionService from "@/services/InteractionService"
 
 const EpisodePage = () => {
   const { user } = useAuth()
@@ -57,21 +54,12 @@ const EpisodePage = () => {
           const fetchedLikeCount = await fetchLikeCount(id, "like")
           const fetchedDislikeCount = await fetchLikeCount(id, "dislike")
 
-          const likesRef = ref(db, `data/podcasts/interactions/likes/${id}`)
-          const likeStatusSnapshot = await get(likesRef)
-          const likeStatus = likeStatusSnapshot.val() || {}
-
-          const dislikesRef = ref(
-            db,
-            `data/podcasts/interactions/dislikes/${id}`
+          const { likeStatus, dislikeStatus } =
+            await firebaseService.getLikesAndDislikesPodcast(id)
+          const isBookmarkedFromFirebase = await firebaseService.getBookmarks(
+            user?.id,
+            id
           )
-          const dislikeStatusSnapshot = await get(dislikesRef)
-          const dislikeStatus = dislikeStatusSnapshot.val() || {}
-
-          const bookmarkRef = ref(db, `data/users/${user?.id}/bookmarks/${id}`)
-          const bookmarkStatusSnapshot = await get(bookmarkRef)
-          const isBookmarkedFromFirebase = bookmarkStatusSnapshot.exists()
-
           setIsBookmarked(isBookmarkedFromFirebase)
           setLikeCount(fetchedLikeCount)
           setDislikeCount(fetchedDislikeCount)
@@ -113,32 +101,22 @@ const EpisodePage = () => {
     const userId = user.id
     const episodeId = id
 
-    const currentLikeStatus = likeStatus[userId]
-    const currentDislikeStatus = dislikeStatus[userId]
-
-    const updatedLikeStatus = { ...likeStatus }
-    const updatedDislikeStatus = { ...dislikeStatus }
-
-    if (!currentLikeStatus) {
-      updatedLikeStatus[userId] = true
-      setLikeCount(likeCount + 1)
-
-      if (currentDislikeStatus) {
-        updatedDislikeStatus[userId] = false
-        setDislikeCount(dislikeCount - 1)
-      }
-    } else {
-      updatedLikeStatus[userId] = false
-      setLikeCount(likeCount - 1)
-    }
-
-    setLikeStatus(updatedLikeStatus)
-    setDislikeStatus(updatedDislikeStatus)
-
     try {
-      await likeEpisode(episodeId, userId, "like", likeCount, dislikeCount)
+      await interactionService.handleThumbsUp(
+        userId,
+        episodeId,
+        likeStatus,
+        dislikeStatus,
+        setLikeCount,
+        setDislikeCount,
+        setLikeStatus,
+        setDislikeStatus,
+        likeCount,
+        dislikeCount,
+        "episode"
+      )
     } catch (error) {
-      console.error("Error toggling like:", error)
+      console.error("Error in clicking like:", error)
     }
   }
 
@@ -158,32 +136,24 @@ const EpisodePage = () => {
     const userId = user.id
     const episodeId = id
 
-    const updatedLikeStatus = { ...likeStatus }
-    const updatedDislikeStatus = { ...dislikeStatus }
-
-    if (!updatedDislikeStatus[userId]) {
-      updatedDislikeStatus[userId] = true
-      setDislikeCount(dislikeCount + 1)
-
-      if (updatedLikeStatus[userId]) {
-        updatedLikeStatus[userId] = false
-        setLikeCount(likeCount - 1)
-      }
-    } else {
-      updatedDislikeStatus[userId] = false
-      setDislikeCount(dislikeCount - 1)
-    }
-
-    setLikeStatus(updatedLikeStatus)
-    setDislikeStatus(updatedDislikeStatus)
-
     try {
-      await likeEpisode(episodeId, userId, "dislike", likeCount, dislikeCount)
+      await interactionService.handleThumbsDown(
+        userId,
+        episodeId,
+        likeStatus,
+        dislikeStatus,
+        setLikeCount,
+        setDislikeCount,
+        setLikeStatus,
+        setDislikeStatus,
+        likeCount,
+        dislikeCount,
+        "episode"
+      )
     } catch (error) {
-      console.error("Error toggling dislike:", error)
+      console.error("Error in clicking dislike:", error)
     }
   }
-
   const handleBookmarkClick = async () => {
     if (!user) {
       showToast(

@@ -15,17 +15,14 @@ import YoutubeLogo from "/public/images/logos/YouTube-White-Dark-Background-Logo
 import { formatDate, DateFormats } from "@utils/static/formatDate"
 import { VideoItem } from "types/interfaces/VideoItem"
 import { YoutubeService } from "@/services/YoutubeService"
-import { ref, getDatabase, get } from "firebase/database"
-import firebaseApp from "@config/firebase"
 import fetchLikeCount from "@utils/static/fetchLikeCountVideos"
-import likeVideo from "@utils/static/likeVideos"
 import { toggleBookmark } from "@utils/static/bookmarkItems"
 import useAuth from "@/hooks/useAuth"
-
-const db = getDatabase(firebaseApp)
+import firebaseService from "@/services/FirebaseService"
+import interactionService from "@/services/InteractionService"
 
 const VideoPage = () => {
-  const { user, loading } = useAuth()
+  const { user } = useAuth()
   const pathname = usePathname()
   const idSegment = pathname.split("/").pop()
   const id = idSegment || ""
@@ -52,18 +49,12 @@ const VideoPage = () => {
           const fetchedLikeCount = await fetchLikeCount(id, "like")
           const fetchedDislikeCount = await fetchLikeCount(id, "dislike")
 
-          const likesRef = ref(db, `data/videos/interactions/likes/${id}`)
-          const likeStatusSnapshot = await get(likesRef)
-          const likeStatus = likeStatusSnapshot.val() || {}
-
-          const dislikesRef = ref(db, `data/videos/interactions/dislikes/${id}`)
-          const dislikeStatusSnapshot = await get(dislikesRef)
-          const dislikeStatus = dislikeStatusSnapshot.val() || {}
-
-          const bookmarkRef = ref(db, `data/users/${user?.id}/bookmarks/${id}`)
-          const bookmarkStatusSnapshot = await get(bookmarkRef)
-          const isBookmarkedFromFirebase = bookmarkStatusSnapshot.exists()
-
+          const { likeStatus, dislikeStatus } =
+            await firebaseService.getLikesAndDislikesVideo(id)
+          const isBookmarkedFromFirebase = await firebaseService.getBookmarks(
+            user?.id,
+            id
+          )
           setIsBookmarked(isBookmarkedFromFirebase)
           setLikeCount(fetchedLikeCount)
           setDislikeCount(fetchedDislikeCount)
@@ -108,32 +99,22 @@ const VideoPage = () => {
     const userId = user.id
     const videoId = id
 
-    const currentLikeStatus = likeStatus[userId]
-    const currentDislikeStatus = dislikeStatus[userId]
-
-    const updatedLikeStatus = { ...likeStatus }
-    const updatedDislikeStatus = { ...dislikeStatus }
-
-    if (!currentLikeStatus) {
-      updatedLikeStatus[userId] = true
-      setLikeCount(likeCount + 1)
-
-      if (currentDislikeStatus) {
-        updatedDislikeStatus[userId] = false
-        setDislikeCount(dislikeCount - 1)
-      }
-    } else {
-      updatedLikeStatus[userId] = false
-      setLikeCount(likeCount - 1)
-    }
-
-    setLikeStatus(updatedLikeStatus)
-    setDislikeStatus(updatedDislikeStatus)
-
     try {
-      await likeVideo(videoId, userId, "like", likeCount, dislikeCount)
+      await interactionService.handleThumbsUp(
+        userId,
+        videoId,
+        likeStatus,
+        dislikeStatus,
+        setLikeCount,
+        setDislikeCount,
+        setLikeStatus,
+        setDislikeStatus,
+        likeCount,
+        dislikeCount,
+        "video"
+      )
     } catch (error) {
-      console.error("Error toggling like:", error)
+      console.error("Error in clicking like:", error)
     }
   }
 
@@ -153,29 +134,22 @@ const VideoPage = () => {
     const userId = user.id
     const videoId = id
 
-    const updatedLikeStatus = { ...likeStatus }
-    const updatedDislikeStatus = { ...dislikeStatus }
-
-    if (!updatedDislikeStatus[userId]) {
-      updatedDislikeStatus[userId] = true
-      setDislikeCount(dislikeCount + 1)
-
-      if (updatedLikeStatus[userId]) {
-        updatedLikeStatus[userId] = false
-        setLikeCount(likeCount - 1)
-      }
-    } else {
-      updatedDislikeStatus[userId] = false
-      setDislikeCount(dislikeCount - 1)
-    }
-
-    setLikeStatus(updatedLikeStatus)
-    setDislikeStatus(updatedDislikeStatus)
-
     try {
-      await likeVideo(videoId, userId, "dislike", likeCount, dislikeCount)
+      await interactionService.handleThumbsDown(
+        userId,
+        videoId,
+        likeStatus,
+        dislikeStatus,
+        setLikeCount,
+        setDislikeCount,
+        setLikeStatus,
+        setDislikeStatus,
+        likeCount,
+        dislikeCount,
+        "video"
+      )
     } catch (error) {
-      console.error("Error toggling dislike:", error)
+      console.error("Error in clicking dislike:", error)
     }
   }
 
