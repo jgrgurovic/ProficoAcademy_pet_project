@@ -29,6 +29,8 @@ export const PODCAST_IDs = [
 
 export const MAX_RESULTS = 10
 
+export const DEFAULT_ITEMS_PER_PAGE = 9
+
 export const MAX_VISIBLE_PAGES = 4
 
 export const MAX_PER_PAGE_YOUTUBE = 9

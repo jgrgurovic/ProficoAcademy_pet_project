@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from "react"
-import { MAX_VISIBLE_PAGES } from "@config/constants"
+import { MAX_VISIBLE_PAGES, DEFAULT_ITEMS_PER_PAGE } from "@config/constants"
 import { compute } from "@utils/static/compute"
 
 interface PaginationProps {
@@ -18,7 +18,7 @@ const Pagination: FC<PaginationProps> = ({
   onPageChange,
 }) => {
   const currentPage: number = page ?? 1
-  const itemsPerPage: number = perPage ?? 9
+  const itemsPerPage: number = perPage ?? DEFAULT_ITEMS_PER_PAGE
 
   const maxVisiblePages = MAX_VISIBLE_PAGES
   const totalPages = Math.ceil(totalItems / itemsPerPage)
@@ -28,7 +28,7 @@ const Pagination: FC<PaginationProps> = ({
     onPageChange(newPage)
   }
 
-  const renderPageNumbers = useMemo(() => {
+  const pageNumbersBar = useMemo(() => {
     const pageNumbers = []
     const halfMaxVisiblePages = Math.floor(maxVisiblePages / 2)
     const [startPage, endPage] = compute<[number, number]>(() => {
@@ -105,7 +105,7 @@ const Pagination: FC<PaginationProps> = ({
         }`}>
         Previous
       </button>
-      {renderPageNumbers}
+      {pageNumbersBar}
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage >= totalPages}
