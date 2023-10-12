@@ -172,7 +172,7 @@ const VideoPage = () => {
       return
     }
     try {
-      await toggleBookmark(userId, id)
+      await toggleBookmark(userId, id, video)
       setIsBookmarked(!isBookmarked)
     } catch (error) {
       console.error("Error toggling bookmark:", error)

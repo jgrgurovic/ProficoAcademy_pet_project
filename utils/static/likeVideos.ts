@@ -25,13 +25,18 @@ export const likeVideo = async (
     const alreadyLiked = likedSnapshot.exists() && likedSnapshot.val()[userId]
     const alreadyDisliked =
       dislikedSnapshot.exists() && dislikedSnapshot.val()[userId]
+    const timestamp = Date.now()
 
     if (currentInteraction === "like") {
       if (alreadyLiked) {
         await set(likesRef, { ...likedSnapshot.val(), [userId]: false })
         likeCount -= 1
       } else {
-        await set(likesRef, { ...likedSnapshot.val(), [userId]: true })
+        await set(likesRef, {
+          ...likedSnapshot.val(),
+          timestamp,
+          [userId]: true,
+        })
         likeCount += 1
         if (alreadyDisliked) {
           await set(dislikesRef, { ...dislikedSnapshot.val(), [userId]: false })
@@ -43,7 +48,11 @@ export const likeVideo = async (
         await set(dislikesRef, { ...dislikedSnapshot.val(), [userId]: false })
         dislikeCount -= 1
       } else {
-        await set(dislikesRef, { ...dislikedSnapshot.val(), [userId]: true })
+        await set(dislikesRef, {
+          ...dislikedSnapshot.val(),
+          timestamp,
+          [userId]: true,
+        })
         dislikeCount += 1
         if (alreadyLiked) {
           await set(likesRef, { ...likedSnapshot.val(), [userId]: false })

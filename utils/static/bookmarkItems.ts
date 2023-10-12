@@ -2,7 +2,11 @@ import firebaseApp from "@config/firebase"
 import "firebase/database"
 import { getDatabase, ref, set, remove, get } from "firebase/database"
 
-export const toggleBookmark = async (user: number, item: string) => {
+export const toggleBookmark = async (
+  user: number,
+  item: string,
+  contentData: any
+) => {
   if (!user) {
     console.error("User not authenticated")
     return
@@ -19,7 +23,13 @@ export const toggleBookmark = async (user: number, item: string) => {
       await remove(bookmarkRef)
       console.log("Removed bookmark in Firebase")
     } else {
-      await set(bookmarkRef, true)
+      const timestamp = Date.now()
+      const dataToStore = {
+        contentData,
+        timestamp,
+        isBookmarked: true,
+      }
+      await set(bookmarkRef, dataToStore)
       console.log("Added bookmark in Firebase")
     }
   } catch (error) {

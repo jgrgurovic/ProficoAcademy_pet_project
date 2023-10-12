@@ -100,7 +100,6 @@ const EpisodePage = () => {
     }
     const userId = user.id
     const episodeId = id
-
     try {
       await interactionService.handleThumbsUp(
         userId,
@@ -173,7 +172,7 @@ const EpisodePage = () => {
       return
     }
     try {
-      await toggleBookmark(userId, id)
+      await toggleBookmark(userId, id, episode)
       setIsBookmarked(!isBookmarked)
     } catch (error) {
       console.error("Error toggling bookmark:", error)
