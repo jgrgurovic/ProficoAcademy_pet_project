@@ -1,6 +1,10 @@
 export interface VideoItem {
+  contentDetails: {
+    duration: string
+  }
   snippet: {
     title: string
+    description: string
     publishedAt: string
     channelTitle: string
     resourceId: {
