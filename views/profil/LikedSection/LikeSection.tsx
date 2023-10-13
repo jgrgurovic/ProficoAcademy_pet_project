@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import dummyLikes from "@constants/dummyLikes"
+import dummyLikes from "../../../config/dummyLikes"
 
 const LikedSection = () => {
   return (

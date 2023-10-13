@@ -24,6 +24,7 @@ const ProfilePage = () => {
     window.location.href = "/login"
   }
   const [firstName, lastName] = user.name.split(" ")
+
   return (
     <section className="font-medium flex flex-col">
       <section className="relative bg-black/20 w h-1/2 rounded-2xl m-12 shadow-2xl">
