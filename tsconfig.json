@@ -12,6 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "baseUrl": ".",
     "incremental": true,
     "plugins": [
       {
@@ -21,7 +22,12 @@
     "paths": {
       "@/*": ["./src/*"],
       "@views/*": ["./views/*"],
-      "@constants/*": ["./constants/*"]
+      "@constants/*": ["./constants/*"],
+      "@utils/*": ["./utils/*"],
+      "@public/*": ["./public/*"],
+      "@hooks/*": ["./hooks/*"],
+      "@config/*": ["./config/*"]
+
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
