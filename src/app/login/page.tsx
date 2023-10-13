@@ -20,7 +20,7 @@ const Login = () => {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [loginStatus, setLoginStatus] = useState<"success" | "error">()
+  const [loginStatus, setLoginStatus] = useState<"success" | "error">("error")
 
   useEffect(() => {
     const token = localStorage.getItem("token")
