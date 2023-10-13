@@ -30,7 +30,7 @@ yarn-error.log*
 # vercel
 .vercel
 
-#firebase
+#firebase 
 firebase/serviceAccountKey.json
 
 # typescript
