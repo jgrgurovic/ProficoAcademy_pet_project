@@ -26,6 +26,7 @@ const VideoPage = () => {
   const pathname = usePathname()
   const idSegment = pathname.split("/").pop()
   const id = idSegment || ""
+  const userId = user?.id
 
   const [video, setVideo] = useState<VideoItem | null>(null)
   const youtubeService = new YoutubeService()
@@ -51,11 +52,13 @@ const VideoPage = () => {
 
           const { likeStatus, dislikeStatus } =
             await firebaseService.getLikesAndDislikesVideo(id)
-          const isBookmarkedFromFirebase = await firebaseService.getBookmarks(
-            user?.id,
-            id
-          )
-          setIsBookmarked(isBookmarkedFromFirebase)
+          if (userId !== undefined) {
+            const isBookmarkedFromFirebase = await firebaseService.getBookmarks(
+              userId,
+              id
+            )
+            setIsBookmarked(isBookmarkedFromFirebase)
+          }
           setLikeCount(fetchedLikeCount)
           setDislikeCount(fetchedDislikeCount)
           setLikeStatus(likeStatus)

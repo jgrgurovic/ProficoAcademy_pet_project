@@ -31,46 +31,50 @@ export const likeEpisode = async (
     const alreadyLiked = likedSnapshot.exists() && likedSnapshot.val()[userId]
     const alreadyDisliked =
       dislikedSnapshot.exists() && dislikedSnapshot.val()[userId]
+
     const timestamp = Date.now()
+
+    let updatedLikeCount = likeCount
+    let updatedDislikeCount = dislikeCount
 
     if (currentInteraction === "like") {
       if (alreadyLiked) {
         await set(likesRef, { ...likedSnapshot.val(), [userId]: false })
-        likeCount -= 1
+        updatedLikeCount -= 1
       } else {
         await set(likesRef, {
           ...likedSnapshot.val(),
           timestamp,
           [userId]: true,
         })
-        likeCount += 1
+        updatedLikeCount += 1
         if (alreadyDisliked) {
           await set(dislikesRef, { ...dislikedSnapshot.val(), [userId]: false })
-          dislikeCount -= 1
+          updatedDislikeCount -= 1
         }
       }
     } else if (currentInteraction === "dislike") {
       if (alreadyDisliked) {
         await set(dislikesRef, { ...dislikedSnapshot.val(), [userId]: false })
-        dislikeCount -= 1
+        updatedDislikeCount -= 1
       } else {
         await set(dislikesRef, {
           ...dislikedSnapshot.val(),
           timestamp,
           [userId]: true,
         })
-        dislikeCount += 1
+        updatedDislikeCount += 1
         if (alreadyLiked) {
           await set(likesRef, { ...likedSnapshot.val(), [userId]: false })
-          likeCount -= 1
+          updatedLikeCount -= 1
         }
       }
     } else {
       console.log("Invalid interaction")
     }
 
-    await set(likeCountRef, likeCount)
-    await set(dislikeCountRef, dislikeCount)
+    await set(likeCountRef, updatedLikeCount)
+    await set(dislikeCountRef, updatedDislikeCount)
 
     return { likeCount, dislikeCount }
   } catch (error) {

@@ -3,7 +3,7 @@ import likeVideo from "@utils/static/likeVideos"
 
 class InteractionService {
   async handleThumbsUp(
-    userId: any,
+    userId: number,
     contentId: string,
     likeStatus: { [key: string]: boolean },
     dislikeStatus: { [key: string]: boolean },
@@ -57,7 +57,7 @@ class InteractionService {
   }
 
   async handleThumbsDown(
-    userId: any,
+    userId: number,
     contentId: string,
     likeStatus: { [key: string]: boolean },
     dislikeStatus: { [key: string]: boolean },

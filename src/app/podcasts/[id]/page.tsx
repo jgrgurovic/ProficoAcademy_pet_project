@@ -30,6 +30,7 @@ const EpisodePage = () => {
   const pathname = usePathname()
   const idSegment = pathname.split("/").pop()
   const id = idSegment || ""
+  const userId = user?.id
 
   const [episode, setEpisode] = useState<PodcastEpisode | null>(null)
   const [likeCount, setLikeCount] = useState<number>(0)
@@ -56,11 +57,14 @@ const EpisodePage = () => {
 
           const { likeStatus, dislikeStatus } =
             await firebaseService.getLikesAndDislikesPodcast(id)
-          const isBookmarkedFromFirebase = await firebaseService.getBookmarks(
-            user?.id,
-            id
-          )
-          setIsBookmarked(isBookmarkedFromFirebase)
+
+          if (userId !== undefined) {
+            const isBookmarkedFromFirebase = await firebaseService.getBookmarks(
+              userId,
+              id
+            )
+            setIsBookmarked(isBookmarkedFromFirebase)
+          }
           setLikeCount(fetchedLikeCount)
           setDislikeCount(fetchedDislikeCount)
           setLikeStatus(likeStatus)
@@ -239,7 +243,7 @@ const EpisodePage = () => {
               Your browser does not support the audio element.
             </audio>
           </div>
-          <div className=" inline-flex">
+          <div className="inline-flex">
             <div
               className="pr-6 pl-3 py-1 bg-white/10 rounded-2xl inline-flex justify-center items-center hover:bg-white/20 cursor-pointer"
               onClick={handleThumbsUpClick}>

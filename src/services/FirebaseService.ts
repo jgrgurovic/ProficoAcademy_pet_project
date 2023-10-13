@@ -11,39 +11,34 @@ import firebaseApp from "@config/firebase"
 const db = getDatabase(firebaseApp)
 
 class FirebaseService {
-  async getLikesAndDislikesPodcast(id: any) {
-    try {
-      const likesRef = ref(db, `data/podcasts/interactions/likes/${id}`)
-      const likeStatusSnapshot = await get(likesRef)
-      const likeStatus = likeStatusSnapshot.val() || {}
+  private async getLikeDislikeStatus(type: string, id: string) {
+    const interactionType = type === "podcast" ? "podcasts" : "videos"
+    const likesRef = ref(db, `data/${interactionType}/interactions/likes/${id}`)
+    const dislikesRef = ref(
+      db,
+      `data/${interactionType}/interactions/dislikes/${id}`
+    )
 
-      const dislikesRef = ref(db, `data/podcasts/interactions/dislikes/${id}`)
-      const dislikeStatusSnapshot = await get(dislikesRef)
-      const dislikeStatus = dislikeStatusSnapshot.val() || {}
+    const [likeStatusSnapshot, dislikeStatusSnapshot] = await Promise.all([
+      get(likesRef),
+      get(dislikesRef),
+    ])
 
-      return { likeStatus, dislikeStatus }
-    } catch (error) {
-      console.error("Error fetching likes and dislikes:", error)
-      throw error
-    }
+    const likeStatus = likeStatusSnapshot.val() || {}
+    const dislikeStatus = dislikeStatusSnapshot.val() || {}
+
+    return { likeStatus, dislikeStatus }
   }
-  async getLikesAndDislikesVideo(id: any) {
-    try {
-      const likesRef = ref(db, `data/videos/interactions/likes/${id}`)
-      const likeStatusSnapshot = await get(likesRef)
-      const likeStatus = likeStatusSnapshot.val() || {}
 
-      const dislikesRef = ref(db, `data/videos/interactions/dislikes/${id}`)
-      const dislikeStatusSnapshot = await get(dislikesRef)
-      const dislikeStatus = dislikeStatusSnapshot.val() || {}
-
-      return { likeStatus, dislikeStatus }
-    } catch (error) {
-      console.error("Error fetching likes and dislikes:", error)
-      throw error
-    }
+  async getLikesAndDislikesPodcast(id: string) {
+    return this.getLikeDislikeStatus("podcast", id)
   }
-  async getBookmarks(userId: any, id: string) {
+
+  async getLikesAndDislikesVideo(id: string) {
+    return this.getLikeDislikeStatus("video", id)
+  }
+
+  async getBookmarks(userId: number, id: string) {
     try {
       const bookmarkRef = ref(db, `data/users/${userId}/bookmarks/${id}`)
       const bookmarkStatusSnapshot = await get(bookmarkRef)
@@ -54,7 +49,8 @@ class FirebaseService {
       throw error
     }
   }
-  async getLatestUserBookmarks(userId: any, limit: number) {
+
+  async getLatestUserBookmarks(userId: number, limit: number) {
     try {
       const bookmarksRef = ref(db, `data/users/${userId}/bookmarks`)
 
@@ -74,7 +70,8 @@ class FirebaseService {
       console.error("Error fetching users bookmarks:", error)
     }
   }
-  async getAllUserBookmarks(userId: any) {
+
+  async getAllUserBookmarks(userId: number) {
     try {
       const bookmarksRef = ref(db, `data/users/${userId}/bookmarks`)
 
@@ -91,6 +88,7 @@ class FirebaseService {
       console.error("Error fetching user's bookmarks:", error)
     }
   }
+
   async getNewestContent() {
     try {
       const newestVideosRef = ref(db, "data/content")
@@ -115,147 +113,109 @@ class FirebaseService {
       console.error("Error fetching newest videos/podcasts:", error)
     }
   }
-  async getUserLikedEpisodes(userId: any): Promise<
-    {
-      episodeId: string
-      episodeData: any
-      timestamp: number
-    }[]
-  > {
+
+  private async getLikedItems(
+    userId: number,
+    dataPath: string,
+    itemPath: string,
+    itemIdField: string,
+    interactionType: string
+  ): Promise<any[]> {
     try {
-      const likedEpisodesRef = ref(db, `data/podcasts/interactions/likes`)
-      const likedEpisodesSnapshot = await get(likedEpisodesRef)
+      const likedItemsRef = ref(db, dataPath)
+      const likedItemsSnapshot = await get(likedItemsRef)
 
-      if (likedEpisodesSnapshot.exists()) {
-        const likedEpisodeData = []
+      if (likedItemsSnapshot.exists()) {
+        const likedItemsData = []
 
-        for (const episodeId in likedEpisodesSnapshot.val()) {
+        for (const itemId in likedItemsSnapshot.val()) {
           if (
-            likedEpisodesSnapshot.val().hasOwnProperty(episodeId) &&
-            likedEpisodesSnapshot.val()[episodeId][userId]
+            likedItemsSnapshot.val().hasOwnProperty(itemId) &&
+            likedItemsSnapshot.val()[itemId][userId]
           ) {
-            const timestamp = likedEpisodesSnapshot.val()[episodeId].timestamp
-            likedEpisodeData.push({ episodeId, timestamp })
+            const timestamp = likedItemsSnapshot.val()[itemId].timestamp
+            likedItemsData.push({ [itemIdField]: itemId, timestamp })
           }
         }
 
-        if (likedEpisodeData.length > 0) {
-          console.log("Liked Episode Data:", likedEpisodeData)
-          const likedEpisodesData = []
+        if (likedItemsData.length > 0) {
+          const likedItemsDetails = []
 
-          for (const likedEpisode of likedEpisodeData) {
-            const episodeId = likedEpisode.episodeId
-            const timestamp = likedEpisode.timestamp
+          for (const likedItem of likedItemsData) {
+            const itemID = likedItem[itemIdField]
+            const timestamp = likedItem.timestamp
 
-            const episodesRef = ref(db, "data/podcasts/episodes")
-            const episodesSnapshot = await get(episodesRef)
+            const itemRef = ref(db, itemPath)
+            const itemSnapshot = await get(itemRef)
 
-            if (episodesSnapshot.exists()) {
-              const episodesData = episodesSnapshot.val()
+            if (itemSnapshot.exists()) {
+              const itemsData = itemSnapshot.val()
 
-              for (const uid in episodesData) {
-                if (episodesData.hasOwnProperty(uid)) {
-                  const episodeData = episodesData[uid]
-                  if (episodeData.id === episodeId) {
-                    likedEpisodesData.push({
-                      episodeId,
-                      episodeData,
-                      timestamp,
-                    })
+              for (const uid in itemsData) {
+                if (itemsData.hasOwnProperty(uid)) {
+                  const itemData = itemsData[uid]
+                  const isPodcast = interactionType === "podcast"
+
+                  if (isPodcast) {
+                    if (itemData.id === itemID) {
+                      likedItemsDetails.push({
+                        [itemIdField]: itemID,
+                        itemData: itemData,
+                        timestamp,
+                      })
+                    }
+                  } else {
+                    if (itemData.snippet.resourceId.videoId === itemID) {
+                      likedItemsDetails.push({
+                        [itemIdField]: itemID,
+                        itemData: itemData,
+                        timestamp,
+                      })
+                    }
                   }
                 }
               }
             }
           }
+          likedItemsDetails.sort((a, b) => b.timestamp - a.timestamp)
 
-          likedEpisodeData.sort((a, b) => b.timestamp - a.timestamp)
-          if (likedEpisodesData.length > 0) {
-            return likedEpisodesData
+          if (likedItemsDetails.length > 0) {
+            return likedItemsDetails
           }
         } else {
-          console.log("No liked episodes found for the user.")
+          console.log(`No liked items found for the user.`)
         }
       } else {
-        console.log("No liked episodes found for the user.")
+        console.log(`No liked items found for the user.`)
       }
       return []
     } catch (error) {
-      console.error("Error gettin users liked episodes:", error)
+      console.error(`Error getting users liked items:`, error)
       return []
     }
   }
 
-  async getLikedVideos(userId: any): Promise<
-    {
-      videoId: string
-      videoData: any
-      timestamp: number
-    }[]
-  > {
-    try {
-      const likedVideosRef = ref(db, `data/videos/interactions/likes`)
-      const likedVideosSnapshot = await get(likedVideosRef)
-
-      if (likedVideosSnapshot.exists()) {
-        const likedVideoData = []
-
-        for (const videoId in likedVideosSnapshot.val()) {
-          if (
-            likedVideosSnapshot.val().hasOwnProperty(videoId) &&
-            likedVideosSnapshot.val()[videoId][userId]
-          ) {
-            const timestamp = likedVideosSnapshot.val()[videoId].timestamp
-            likedVideoData.push({ videoId, timestamp })
-          }
-        }
-
-        if (likedVideoData.length > 0) {
-          console.log("Liked Video IDs:", likedVideoData)
-          const likedVideosData = []
-
-          for (const likedVideo of likedVideoData) {
-            const videoId = likedVideo.videoId
-            const timestamp = likedVideo.timestamp
-
-            const videosRef = ref(db, "data/content")
-            const videosSnapshot = await get(videosRef)
-
-            if (videosSnapshot.exists()) {
-              const videosData = videosSnapshot.val()
-
-              for (const uid in videosData) {
-                if (videosData.hasOwnProperty(uid)) {
-                  const videoData = videosData[uid]
-                  if (videoData.snippet.resourceId.videoId === videoId) {
-                    likedVideosData.push({
-                      videoId,
-                      videoData,
-                      timestamp,
-                    })
-                  }
-                }
-              }
-            }
-          }
-
-          likedVideoData.sort((a, b) => b.timestamp - a.timestamp)
-          if (likedVideosData.length > 0) {
-            console.log("Liked Videos Data:", likedVideosData)
-            return likedVideosData
-          }
-        } else {
-          console.log("No liked videos found for the user.")
-        }
-      } else {
-        console.log("No liked videos found for the user.")
-      }
-      return []
-    } catch (error) {
-      console.error("Error gettin users liked videos:", error)
-      return []
-    }
+  async getUserLikedEpisodes(userId: number): Promise<any[]> {
+    return this.getLikedItems(
+      userId,
+      "data/podcasts/interactions/likes",
+      "data/podcasts/episodes",
+      "episodeId",
+      "podcast"
+    )
   }
-  async getAllCombinedLikes(userId: any) {
+
+  async getLikedVideos(userId: number): Promise<any[]> {
+    return this.getLikedItems(
+      userId,
+      "data/videos/interactions/likes",
+      "data/content",
+      "videoId",
+      "video"
+    )
+  }
+
+  async getAllCombinedLikes(userId: number) {
     try {
       const likedEpisodes = await this.getUserLikedEpisodes(userId)
       const likedVideos = await this.getLikedVideos(userId)
@@ -271,7 +231,8 @@ class FirebaseService {
       return []
     }
   }
-  async getLatestCombinedLikes(userId: any): Promise<any[]> {
+
+  async getLatestCombinedLikes(userId: number): Promise<any[]> {
     try {
       const combinedLikes = await this.getAllCombinedLikes(userId)
 
