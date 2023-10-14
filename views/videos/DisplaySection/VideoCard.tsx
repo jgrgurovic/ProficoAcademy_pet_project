@@ -43,7 +43,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
             alt="play button"
             width={284}
             height={158}
-            className="hidden group-hover:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white fill-current"
+            className="hidden group-hover:block animate-pulse absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white fill-current"
           />
         </Link>
       </div>

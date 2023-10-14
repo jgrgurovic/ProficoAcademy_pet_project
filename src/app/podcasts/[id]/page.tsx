@@ -18,6 +18,7 @@ import {
   DateFormats,
 } from "@utils/static/formatDate"
 import { showToast } from "@/components/toastMessage"
+import { splitSentences } from "@utils/static/splitSentence"
 import { PodcastEpisode } from "types/interfaces/PodcastEpisode"
 import { SpotifyService } from "@/services/SpotifyService"
 import fetchLikeCount from "@utils/static/fetchLikeCountPodcasts"
@@ -42,6 +43,7 @@ const EpisodePage = () => {
     [key: string]: boolean
   }>({})
   const [isBookmarked, setIsBookmarked] = useState(false)
+  const [isDescriptionVisible, setDescriptionVisible] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -191,13 +193,25 @@ const EpisodePage = () => {
     }
   }
 
+  const spotifyURI = episode.podcastV2.data.uri
+  const parts = spotifyURI.split(":")
+  const podcastID = parts[2]
+
+  const toggleDescription = () => {
+    setDescriptionVisible(!isDescriptionVisible)
+  }
+
+  const { name, coverArt, description, podcastV2 } = episode
+  const { sources } = coverArt
+  const { data } = podcastV2
+
   return (
     <>
       <div className="group rounded-xl flex flex-row overflow-hidden justify-center my-20 ">
         <div className="relative w-1/3">
           <Image
-            src={episode.coverArt.sources[2].url}
-            alt={episode.name}
+            src={sources[2].url}
+            alt={name}
             layout="responsive"
             width={284}
             height={158}
@@ -233,12 +247,14 @@ const EpisodePage = () => {
               )}
             </div>
           </div>
-          <h1 className="text-3xl font-semibold my-2">{episode.name}</h1>
-          <h2 className="text-md mt-2">
-            <span className="bg-green-500 text-white font-semibold rounded-full px-6 py-2 inline-block">
-              {episode.podcastV2.data.name}
+          <h1 className="text-3xl font-semibold my-2">{name}</h1>
+          <a
+            href={`https://open.spotify.com/show/${podcastID}`}
+            target="_blank">
+            <span className="bg-green-500 text-white text-md mt-2 font-semibold rounded-full px-6 py-2 inline-block">
+              {data.name}
             </span>
-          </h2>
+          </a>
           <p className="text-gray-300 my-2">
             Duration: {minutes} min {seconds} s
           </p>
@@ -246,10 +262,12 @@ const EpisodePage = () => {
             Publication Date: {formattedPublicationDate}
           </p>
           <div className="my-8">
-            <audio controls>
-              <source src={episode.audio.items[0].url} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
+            <iframe
+              className="w-full"
+              height="80"
+              allowTransparency={true}
+              allow="encrypted-media"
+              src={`https://open.spotify.com/embed/episode/${id}?theme=white?utm_source=oembed`}></iframe>
           </div>
           <div className="inline-flex">
             <div
@@ -268,10 +286,25 @@ const EpisodePage = () => {
           </div>
         </div>
       </div>
-      <div className="mx-24 max-w-full ">
-        <p className="text-gray-200 text-l mb-4 whitespace-normal break-words">
-          {episode.description}
-        </p>
+      <div>
+        <h2 className="text-md mt-2">
+          <button
+            onClick={toggleDescription}
+            className="bg-gray-800 hover:bg-gray-900 text-white font-semibold rounded-full px-6 py-2 inline-block mx-24">
+            DESCRIPTION
+          </button>
+        </h2>
+        {isDescriptionVisible && (
+          <div className="leading-normal mx-24 max-w-full bg-black/20 p-3 rounded-2xl">
+            {splitSentences(description).map((sentence) => (
+              <p
+                key={sentence}
+                className="text-gray-100 text-l mb-3 whitespace-normal break-words">
+                {sentence}
+              </p>
+            ))}
+          </div>
+        )}
       </div>
     </>
   )

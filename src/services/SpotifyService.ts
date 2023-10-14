@@ -25,8 +25,10 @@ export class SpotifyService {
 
   async fetchPodcastEpisodes(
     podcastId: string,
-    maxResults: number
-  ): Promise<any[]> {
+    maxResults: number,
+    page: number,
+    perPage: number
+  ) {
     try {
       const firebaseEpisodes: PodcastEpisode[] = []
       const db = getDatabase(firebaseApp)
@@ -46,6 +48,8 @@ export class SpotifyService {
           id: podcastId,
           offset: "0",
           limit: maxResults.toString(),
+          page: page,
+          perPage: perPage,
         },
         headers: SPOTIFY_HEADERS,
       }
