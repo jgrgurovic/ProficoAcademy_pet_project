@@ -1,4 +1,5 @@
 import React from "react"
+import { v4 as uuidv4 } from "uuid"
 
 interface TagCloudProps {
   tags: string[]
@@ -13,9 +14,9 @@ const TagCloud: React.FC<TagCloudProps> = ({
 }) => {
   return (
     <div className="tag-cloud flex flex-wrap gap-4">
-      {tags.map((tag, index) => (
+      {tags.map((tag) => (
         <div
-          key={index}
+          key={uuidv4()}
           className={`
        bg-black/30 text-white p-2 mx-2 rounded-3xl cursor-pointer
        hover:bg-black/70 hover:scale-110 transform transition-all duration-500

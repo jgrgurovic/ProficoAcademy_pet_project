@@ -43,39 +43,45 @@ export class SpotifyService {
       const response = await axios.request(options)
       const episodesData =
         response.data.data?.podcastUnionV2?.episodesV2?.items || []
-      const podcastName = response.data.data?.podcastUnionV2?.name || "N/A"
-      const podcastEpisodes = episodesData.map((episodeData: any) => {
-        const audioItems = episodeData.entity?.data?.audio?.items || []
-        const audioUrl = audioItems.length > 0 ? audioItems[0]?.url || "" : ""
 
-        const coverArtSources =
-          episodeData.entity?.data?.coverArt?.sources || []
+      const podcastEpisodes: any[] = episodesData.map((episodeData: any) => {
+        const {
+          entity: {
+            data: {
+              audio: { items: audioItems = [] } = {},
+              coverArt: { sources: coverArtSources = [] } = {},
+              id = "N/A",
+              name: title = "N/A",
+              description = "N/A",
+              duration: { totalMilliseconds = 0 } = {},
+              releaseDate: { isoString: rawPublicationDate = "N/A" } = {},
+              podcastV2: { data: { name: podcastName = "N/A" } = {} } = {},
+            } = {},
+          } = {},
+          uid = "",
+        } = episodeData
+
+        const audioUrl = audioItems.length > 0 ? audioItems[0]?.url || "" : ""
         const coverArtUrl =
           coverArtSources.length > 0 ? coverArtSources[1]?.url || "" : ""
-
-        const rawPublicationDate =
-          episodeData.entity?.data?.releaseDate?.isoString || "N/A"
         const publicationDate = new Date(rawPublicationDate)
         const formattedPublicationDate = publicationDate
           .toISOString()
           .split("T")[0]
 
         return {
-          id: episodeData.entity?.data?.id,
-          title: episodeData.entity?.data?.name || "N/A",
-          description: episodeData.entity?.data?.description || "N/A",
+          id: id,
+          title,
+          description: description,
           audioUrl: audioUrl,
           coverArtUrl: coverArtUrl,
-          duration: episodeData.entity?.data?.duration?.totalMilliseconds
-            ? episodeData.entity.data.duration.totalMilliseconds / 1000
-            : 0,
+          duration: totalMilliseconds > 0 ? totalMilliseconds / 1000 : 0,
           publicationDate: formattedPublicationDate,
-          uid: episodeData.uid || "",
+          uid: uid,
           podcastName: podcastName,
         }
       })
 
-      console.log("Fetched podcast episodes:", podcastEpisodes)
       return podcastEpisodes
     } catch (error) {
       console.error("Error fetching podcast episodes:", error)
