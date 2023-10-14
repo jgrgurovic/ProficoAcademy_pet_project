@@ -1,6 +1,8 @@
 import axios from "axios"
 import { YOUTUBER_HEADERS } from "config/constants"
 import { VideoItem } from "types/interfaces/VideoItem"
+import { getDatabase, ref, set, get } from "firebase/database"
+import firebaseApp from "@config/firebase"
 
 export class YoutubeService {
   async fetchVideo(id: string) {
@@ -35,7 +37,6 @@ export class YoutubeService {
       throw error
     }
   }
-
   async fetchVideosFromPlaylists(
     playlistIds: string[],
     maxResults: number,
@@ -45,6 +46,16 @@ export class YoutubeService {
     try {
       const part: string = "snippet"
       const allVideos: VideoItem[] = []
+      const firebaseVideos: VideoItem[] = []
+
+      const db = getDatabase(firebaseApp)
+      const videosRef = ref(db, "data/content")
+      const existingVideosSnapshot = await get(videosRef)
+      const existingVideos: VideoItem[] = existingVideosSnapshot.val() || []
+
+      const existingVideoIds = new Set(
+        existingVideos.map((video) => video.snippet.resourceId.videoId)
+      )
 
       for (const playlistId of playlistIds) {
         const response = await axios.get(
@@ -63,6 +74,15 @@ export class YoutubeService {
 
         const videos: VideoItem[] = response.data.items
 
+        for (const video of videos) {
+          const videoId = video.snippet.resourceId.videoId
+
+          if (!existingVideoIds.has(videoId)) {
+            firebaseVideos.push(video)
+            existingVideoIds.add(videoId)
+          }
+        }
+
         const uniqueVideos = videos.filter(
           (video, index, self) =>
             index ===
@@ -76,7 +96,10 @@ export class YoutubeService {
         allVideos.push(...uniqueVideos)
       }
 
-      console.log("Fetched videos:", allVideos)
+      if (firebaseVideos.length > existingVideos.length) {
+        await set(videosRef, firebaseVideos)
+      }
+
       return allVideos
     } catch (error) {
       console.error("Error fetching videos from playlists:", error)

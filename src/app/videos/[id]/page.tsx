@@ -1,26 +1,46 @@
 "use client"
+
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { usePathname, useSearchParams } from "next/navigation"
+import { usePathname } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
+import {
+  FaThumbsUp,
+  FaThumbsDown,
+  FaBookmark,
+  FaRegBookmark,
+} from "react-icons/fa"
+import { showToast } from "@/components/toastMessage"
 import YoutubeLogo from "/public/images/logos/YouTube-White-Dark-Background-Logo.wine.svg"
 import { formatDate, DateFormats } from "@utils/static/formatDate"
 import { splitSentences } from "@utils/static/splitSentence"
 import { VideoItem } from "types/interfaces/VideoItem"
 import { YoutubeService } from "@/services/YoutubeService"
+import fetchLikeCount from "@utils/static/fetchLikeCountVideos"
+import { toggleBookmark } from "@utils/static/bookmarkItems"
+import useAuth from "@/hooks/useAuth"
+import firebaseService from "@/services/FirebaseService"
+import interactionService from "@/services/InteractionService"
+import { InteractionType } from "@utils/enums/interactionTypes"
+import { ContentType } from "@utils/enums/contentTypes"
 import { compute } from "@utils/static/compute"
 
 const VideoPage = () => {
-  const router = useRouter()
+  const { user } = useAuth()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-
   const idSegment = pathname.split("/").pop()
-  const id = idSegment || searchParams.get("id") || ""
+  const id = idSegment || ""
+  const userId = user?.id
 
   const [video, setVideo] = useState<VideoItem | null>(null)
   const youtubeService = new YoutubeService()
+  const [likeCount, setLikeCount] = useState<number>(0)
+  const [likeStatus, setLikeStatus] = useState<{ [key: string]: boolean }>({})
+  const [dislikeCount, setDislikeCount] = useState<number>(0)
+  const [dislikeStatus, setDislikeStatus] = useState<{
+    [key: string]: boolean
+  }>({})
+  const [isBookmarked, setIsBookmarked] = useState(false)
   const [isDescriptionVisible, setDescriptionVisible] = useState(false)
 
   useEffect(() => {
@@ -29,6 +49,31 @@ const VideoPage = () => {
         if (id) {
           const videoData = await youtubeService.fetchVideo(id)
           setVideo(videoData)
+          setLikeStatus(videoData.likeStatus || {})
+          setDislikeStatus(videoData.dislikeStatus || {})
+
+          const fetchedLikeCount = await fetchLikeCount(
+            id,
+            InteractionType.Like
+          )
+          const fetchedDislikeCount = await fetchLikeCount(
+            id,
+            InteractionType.Dislike
+          )
+
+          const { likeStatus, dislikeStatus } =
+            await firebaseService.getLikesAndDislikesVideo(id)
+          if (userId !== undefined) {
+            const isBookmarkedFromFirebase = await firebaseService.getBookmarks(
+              userId,
+              id
+            )
+            setIsBookmarked(isBookmarkedFromFirebase)
+          }
+          setLikeCount(fetchedLikeCount)
+          setDislikeCount(fetchedDislikeCount)
+          setLikeStatus(likeStatus)
+          setDislikeStatus(dislikeStatus)
         } else {
           console.warn("No video ID provided.")
         }
@@ -38,7 +83,7 @@ const VideoPage = () => {
     }
 
     fetchVideo()
-  }, [id])
+  }, [id, user])
 
   const videoTitle = video?.snippet?.title || ""
   const titleParts = videoTitle.split("|")
@@ -65,6 +110,102 @@ const VideoPage = () => {
     return <p>Loading episode data...</p>
   }
 
+  const handleThumbsUpClick = async () => {
+    if (!user) {
+      showToast(
+        <>
+          Please{" "}
+          <Link href="/login" className="underline">
+            log in
+          </Link>{" "}
+          to like the video.
+        </>
+      )
+      return
+    }
+    const userId = user.id
+    const videoId = id
+
+    try {
+      await interactionService.handleThumbsUp(
+        userId,
+        videoId,
+        likeStatus,
+        dislikeStatus,
+        setLikeCount,
+        setDislikeCount,
+        setLikeStatus,
+        setDislikeStatus,
+        likeCount,
+        dislikeCount,
+        ContentType.Video
+      )
+    } catch (error) {
+      console.error("Error in clicking like:", error)
+    }
+  }
+
+  const handleThumbsDownClick = async () => {
+    if (!user) {
+      showToast(
+        <>
+          Please{" "}
+          <Link href="/login" className="underline">
+            log in
+          </Link>{" "}
+          to dislike the video.
+        </>
+      )
+      return
+    }
+    const userId = user.id
+    const videoId = id
+
+    try {
+      await interactionService.handleThumbsDown(
+        userId,
+        videoId,
+        likeStatus,
+        dislikeStatus,
+        setLikeCount,
+        setDislikeCount,
+        setLikeStatus,
+        setDislikeStatus,
+        likeCount,
+        dislikeCount,
+        ContentType.Video
+      )
+    } catch (error) {
+      console.error("Error in clicking dislike:", error)
+    }
+  }
+
+  const handleBookmarkClick = async () => {
+    if (!user) {
+      showToast(
+        <>
+          Please{" "}
+          <Link href="/login" className="underline">
+            log in
+          </Link>{" "}
+          to bookmark the video.
+        </>
+      )
+      return
+    }
+    const userId = user.id
+    if (!userId || !id) {
+      console.error("User bookmarkID is missing")
+      return
+    }
+    try {
+      await toggleBookmark(userId, id, video)
+      setIsBookmarked(!isBookmarked)
+    } catch (error) {
+      console.error("Error toggling bookmark:", error)
+    }
+  }
+ 
   const toggleDescription = () => {
     setDescriptionVisible(!isDescriptionVisible)
   }
@@ -87,6 +228,32 @@ const VideoPage = () => {
           />
         </div>
         <div className="px-4 w-1/2 flex-shrink ">
+                  <div className="inline-flex w-full">
+            <div>
+              <Image
+                src={YoutubeLogo}
+                alt="Spotify Logo"
+                width={106}
+                height={40}
+              />
+            </div>
+            <div className="flex-grow"></div>
+            <div className="flex-end cursor-pointer">
+              {isBookmarked ? (
+                <FaBookmark
+                  size={24}
+                  className="hover:animate-pulse text-white"
+                  onClick={handleBookmarkClick}
+                />
+              ) : (
+                <FaRegBookmark
+                  size={24}
+                  className="hover:animate-pulse"
+                  onClick={handleBookmarkClick}
+                />
+              )}
+            </div>
+          </div>
           <h1 className="text-2xl font-semibold text-white mb-2 py-2">
             {displayedTitle}
           </h1>
@@ -104,6 +271,21 @@ const VideoPage = () => {
             <p className="text-gray-300 mb-4">
               Published At: {formattedPublicationDate}
             </p>
+          </div>
+          <div className=" inline-flex">
+            <div
+              className="pr-6 pl-3 py-1 bg-white/10 rounded-2xl inline-flex justify-center items-center hover:bg-white/20 cursor-pointer"
+              onClick={handleThumbsUpClick}>
+              <FaThumbsUp size={24} className="hover:animate-pulse" />
+              <p className="text-white text-l ml-3 "> {likeCount}</p>
+            </div>
+            <div
+              className="pr-3 pl-3 py-1 ml-2 bg-white/10 rounded-2xl inline-flex justify-center items-center hover:bg-white/20"
+              style={{ cursor: "pointer" }}
+              onClick={handleThumbsDownClick}>
+              <FaThumbsDown size={24} className="hover:animate-pulse" />
+              <p className="text-white text-l ml-3 "> {dislikeCount}</p>
+            </div>
           </div>
         </div>
       </div>
