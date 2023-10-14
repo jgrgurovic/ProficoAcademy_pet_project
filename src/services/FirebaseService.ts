@@ -7,16 +7,17 @@ import {
   limitToLast,
 } from "firebase/database"
 import firebaseApp from "@config/firebase"
+import { ContentType } from "@utils/enums/contentTypes"
 
 const db = getDatabase(firebaseApp)
 
 class FirebaseService {
-  private async getLikeDislikeStatus(type: string, id: string) {
-    const interactionType = type === "podcast" ? "podcasts" : "videos"
-    const likesRef = ref(db, `data/${interactionType}/interactions/likes/${id}`)
+  private async getLikeDislikeStatus(type: ContentType, id: string) {
+    const contentType = type === ContentType.Podcast ? "podcasts" : "videos"
+    const likesRef = ref(db, `data/${contentType}/interactions/likes/${id}`)
     const dislikesRef = ref(
       db,
-      `data/${interactionType}/interactions/dislikes/${id}`
+      `data/${contentType}/interactions/dislikes/${id}`
     )
 
     const [likeStatusSnapshot, dislikeStatusSnapshot] = await Promise.all([
@@ -31,11 +32,11 @@ class FirebaseService {
   }
 
   async getLikesAndDislikesPodcast(id: string) {
-    return this.getLikeDislikeStatus("podcast", id)
+    return this.getLikeDislikeStatus(ContentType.Podcast, id)
   }
 
   async getLikesAndDislikesVideo(id: string) {
-    return this.getLikeDislikeStatus("video", id)
+    return this.getLikeDislikeStatus(ContentType.Video, id)
   }
 
   async getBookmarks(userId: number, id: string) {
@@ -58,16 +59,20 @@ class FirebaseService {
       const limitedQuery = limitToLast(limit)
       const limitedOrderedQuery = query(orderedQuery, limitedQuery)
 
-      get(limitedOrderedQuery).then((snapshot) => {
+      const snapshot = await get(limitedOrderedQuery)
+
+      if (snapshot.exists()) {
         if (snapshot.exists()) {
           const bookmarksData = snapshot.val()
-          console.log("Newest Bookmarks:", bookmarksData)
+          return bookmarksData
         } else {
           console.log("No bookmarks found for user.")
+          return null
         }
-      })
+      }
     } catch (error) {
       console.error("Error fetching users bookmarks:", error)
+      throw error
     }
   }
 
@@ -80,7 +85,7 @@ class FirebaseService {
 
       if (snapshot.exists()) {
         const bookmarksData = snapshot.val()
-        console.log("User Bookmarks:", bookmarksData)
+        return bookmarksData
       } else {
         console.log("No bookmarks found for user.")
       }
@@ -105,8 +110,6 @@ class FirebaseService {
       if (videoSnapshot.exists() && podcastSnapshot.exists()) {
         const newestVideos = Object.values(videoSnapshot.val())
         const newestPodcasts = Object.values(podcastSnapshot.val())
-        console.log("Latest added videos:", newestVideos)
-        console.log("Latest added podcasts", newestPodcasts)
         return { newestVideos, newestPodcasts }
       }
     } catch (error) {
@@ -119,7 +122,7 @@ class FirebaseService {
     dataPath: string,
     itemPath: string,
     itemIdField: string,
-    interactionType: string
+    contentType: ContentType
   ): Promise<any[]> {
     try {
       const likedItemsRef = ref(db, dataPath)
@@ -154,7 +157,7 @@ class FirebaseService {
               for (const uid in itemsData) {
                 if (itemsData.hasOwnProperty(uid)) {
                   const itemData = itemsData[uid]
-                  const isPodcast = interactionType === "podcast"
+                  const isPodcast = contentType === ContentType.Podcast
 
                   if (isPodcast) {
                     if (itemData.id === itemID) {
@@ -201,7 +204,7 @@ class FirebaseService {
       "data/podcasts/interactions/likes",
       "data/podcasts/episodes",
       "episodeId",
-      "podcast"
+      ContentType.Podcast
     )
   }
 
@@ -211,7 +214,7 @@ class FirebaseService {
       "data/videos/interactions/likes",
       "data/content",
       "videoId",
-      "video"
+      ContentType.Video
     )
   }
 
@@ -224,7 +227,6 @@ class FirebaseService {
 
       combinedLikes.sort((a, b) => b.timestamp - a.timestamp)
 
-      console.log(combinedLikes)
       return combinedLikes
     } catch (error) {
       console.error("Error getting combined likes:", error)
@@ -238,7 +240,6 @@ class FirebaseService {
 
       const latestLikes = combinedLikes.slice(0, 3)
 
-      console.log(latestLikes)
       return latestLikes
     } catch (error) {
       return []

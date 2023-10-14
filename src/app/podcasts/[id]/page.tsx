@@ -24,6 +24,8 @@ import fetchLikeCount from "@utils/static/fetchLikeCountPodcasts"
 import { toggleBookmark } from "@utils/static/bookmarkItems"
 import firebaseService from "@/services/FirebaseService"
 import interactionService from "@/services/InteractionService"
+import { InteractionType } from "@utils/enums/interactionTypes"
+import { ContentType } from "@utils/enums/contentTypes"
 
 const EpisodePage = () => {
   const { user } = useAuth()
@@ -52,8 +54,14 @@ const EpisodePage = () => {
           setLikeStatus(episodeData.likeStatus || {})
           setDislikeStatus(episodeData.dislikeStatus || {})
 
-          const fetchedLikeCount = await fetchLikeCount(id, "like")
-          const fetchedDislikeCount = await fetchLikeCount(id, "dislike")
+          const fetchedLikeCount = await fetchLikeCount(
+            id,
+            InteractionType.Like
+          )
+          const fetchedDislikeCount = await fetchLikeCount(
+            id,
+            InteractionType.Dislike
+          )
 
           const { likeStatus, dislikeStatus } =
             await firebaseService.getLikesAndDislikesPodcast(id)
@@ -116,7 +124,7 @@ const EpisodePage = () => {
         setDislikeStatus,
         likeCount,
         dislikeCount,
-        "episode"
+        ContentType.Podcast
       )
     } catch (error) {
       console.error("Error in clicking like:", error)
@@ -151,7 +159,7 @@ const EpisodePage = () => {
         setDislikeStatus,
         likeCount,
         dislikeCount,
-        "episode"
+        ContentType.Podcast
       )
     } catch (error) {
       console.error("Error in clicking dislike:", error)

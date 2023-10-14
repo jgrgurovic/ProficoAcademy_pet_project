@@ -1,5 +1,7 @@
 import likeEpisode from "@utils/static/likePodcasts"
 import likeVideo from "@utils/static/likeVideos"
+import { InteractionType } from "@utils/enums/interactionTypes"
+import { ContentType } from "@utils/enums/contentTypes"
 
 class InteractionService {
   async handleThumbsUp(
@@ -17,39 +19,51 @@ class InteractionService {
     >,
     likeCount: number,
     dislikeCount: number,
-    contentType: string
+    contentType: ContentType
   ) {
     if (!userId) {
       throw new Error("User ID is missing")
     }
 
-    const currentLikeStatus = likeStatus[userId]
-    const currentDislikeStatus = dislikeStatus[userId]
+    const isAlreadyLiked = likeStatus[userId]
+    const isAlreadyDisliked = dislikeStatus[userId]
 
     const updatedLikeStatus = { ...likeStatus }
     const updatedDislikeStatus = { ...dislikeStatus }
 
-    if (!currentLikeStatus) {
+    if (isAlreadyLiked) {
+      updatedLikeStatus[userId] = false
+      setLikeCount(likeCount - 1)
+    } else {
       updatedLikeStatus[userId] = true
       setLikeCount(likeCount + 1)
 
-      if (currentDislikeStatus) {
+      if (isAlreadyDisliked) {
         updatedDislikeStatus[userId] = false
         setDislikeCount(dislikeCount - 1)
       }
-    } else {
-      updatedLikeStatus[userId] = false
-      setLikeCount(likeCount - 1)
     }
 
     setLikeStatus(updatedLikeStatus)
     setDislikeStatus(updatedDislikeStatus)
 
     try {
-      if (contentType === "video") {
-        await likeVideo(contentId, userId, "like", likeCount, dislikeCount)
-      } else if (contentType === "episode") {
-        await likeEpisode(contentId, userId, "like", likeCount, dislikeCount)
+      if (contentType === ContentType.Video) {
+        await likeVideo(
+          contentId,
+          userId,
+          InteractionType.Like,
+          likeCount,
+          dislikeCount
+        )
+      } else if (contentType === ContentType.Podcast) {
+        await likeEpisode(
+          contentId,
+          userId,
+          InteractionType.Like,
+          likeCount,
+          dislikeCount
+        )
       }
     } catch (error) {
       console.error("Error toggling like:", error)
@@ -71,12 +85,15 @@ class InteractionService {
     >,
     likeCount: number,
     dislikeCount: number,
-    contentType: string
+    contentType: ContentType
   ) {
     const updatedLikeStatus = { ...likeStatus }
     const updatedDislikeStatus = { ...dislikeStatus }
 
-    if (!updatedDislikeStatus[userId]) {
+    if (updatedDislikeStatus[userId]) {
+      updatedDislikeStatus[userId] = false
+      setDislikeCount(dislikeCount - 1)
+    } else {
       updatedDislikeStatus[userId] = true
       setDislikeCount(dislikeCount + 1)
 
@@ -84,19 +101,28 @@ class InteractionService {
         updatedLikeStatus[userId] = false
         setLikeCount(likeCount - 1)
       }
-    } else {
-      updatedDislikeStatus[userId] = false
-      setDislikeCount(dislikeCount - 1)
     }
 
     setLikeStatus(updatedLikeStatus)
     setDislikeStatus(updatedDislikeStatus)
 
     try {
-      if (contentType === "video") {
-        await likeVideo(contentId, userId, "dislike", likeCount, dislikeCount)
-      } else if (contentType === "episode") {
-        await likeEpisode(contentId, userId, "dislike", likeCount, dislikeCount)
+      if (contentType === ContentType.Video) {
+        await likeVideo(
+          contentId,
+          userId,
+          InteractionType.Dislike,
+          likeCount,
+          dislikeCount
+        )
+      } else if (contentType === ContentType.Podcast) {
+        await likeEpisode(
+          contentId,
+          userId,
+          InteractionType.Dislike,
+          likeCount,
+          dislikeCount
+        )
       }
     } catch (error) {
       console.error("Error toggling dislike:", error)

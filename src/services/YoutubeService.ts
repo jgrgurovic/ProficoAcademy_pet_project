@@ -96,7 +96,6 @@ export class YoutubeService {
         await set(videosRef, firebaseVideos)
       }
 
-      console.log("Fetched videos:", allVideos)
       return allVideos
     } catch (error) {
       console.error("Error fetching videos from playlists:", error)

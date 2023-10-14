@@ -1,6 +1,7 @@
 import firebaseApp from "@config/firebase"
 import "firebase/database"
 import { getDatabase, ref, set, remove, get } from "firebase/database"
+import { showToast } from "@/components/toastMessage"
 
 export const toggleBookmark = async (
   user: number,
@@ -21,7 +22,6 @@ export const toggleBookmark = async (
 
     if (isAlreadyBookmarkedInFirebase) {
       await remove(bookmarkRef)
-      console.log("Removed bookmark in Firebase")
     } else {
       const timestamp = Date.now()
       const dataToStore = {
@@ -30,9 +30,8 @@ export const toggleBookmark = async (
         isBookmarked: true,
       }
       await set(bookmarkRef, dataToStore)
-      console.log("Added bookmark in Firebase")
     }
   } catch (error) {
-    console.error("Error toggling bookmark in Firebase:", error)
+    showToast("An error occurred. Please try again later :(")
   }
 }

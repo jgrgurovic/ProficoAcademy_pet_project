@@ -1,11 +1,13 @@
 import firebaseApp from "@config/firebase"
 import "firebase/database"
 import { getDatabase, ref, set, get } from "firebase/database"
+import { showToast } from "@/components/toastMessage"
+import { InteractionType } from "@utils/enums/interactionTypes"
 
 export const likeEpisode = async (
   episodeId: string,
   userId: any,
-  currentInteraction: string,
+  currentInteraction: InteractionType,
   likeCount: number,
   dislikeCount: number
 ) => {
@@ -37,7 +39,7 @@ export const likeEpisode = async (
     let updatedLikeCount = likeCount
     let updatedDislikeCount = dislikeCount
 
-    if (currentInteraction === "like") {
+    if (currentInteraction === InteractionType.Like) {
       if (alreadyLiked) {
         await set(likesRef, { ...likedSnapshot.val(), [userId]: false })
         updatedLikeCount -= 1
@@ -53,7 +55,7 @@ export const likeEpisode = async (
           updatedDislikeCount -= 1
         }
       }
-    } else if (currentInteraction === "dislike") {
+    } else if (currentInteraction === InteractionType.Dislike) {
       if (alreadyDisliked) {
         await set(dislikesRef, { ...dislikedSnapshot.val(), [userId]: false })
         updatedDislikeCount -= 1
@@ -70,7 +72,7 @@ export const likeEpisode = async (
         }
       }
     } else {
-      console.log("Invalid interaction")
+      showToast("Invalid interaction.")
     }
 
     await set(likeCountRef, updatedLikeCount)
@@ -78,7 +80,7 @@ export const likeEpisode = async (
 
     return { likeCount, dislikeCount }
   } catch (error) {
-    console.error("Error toggling like/dislike:", error)
+    showToast("An error occurred. Please try again later.")
     throw error
   }
 }

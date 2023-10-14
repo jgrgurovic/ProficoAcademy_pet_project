@@ -20,6 +20,8 @@ import { toggleBookmark } from "@utils/static/bookmarkItems"
 import useAuth from "@/hooks/useAuth"
 import firebaseService from "@/services/FirebaseService"
 import interactionService from "@/services/InteractionService"
+import { InteractionType } from "@utils/enums/interactionTypes"
+import { ContentType } from "@utils/enums/contentTypes"
 
 const VideoPage = () => {
   const { user } = useAuth()
@@ -47,8 +49,14 @@ const VideoPage = () => {
           setLikeStatus(videoData.likeStatus || {})
           setDislikeStatus(videoData.dislikeStatus || {})
 
-          const fetchedLikeCount = await fetchLikeCount(id, "like")
-          const fetchedDislikeCount = await fetchLikeCount(id, "dislike")
+          const fetchedLikeCount = await fetchLikeCount(
+            id,
+            InteractionType.Like
+          )
+          const fetchedDislikeCount = await fetchLikeCount(
+            id,
+            InteractionType.Dislike
+          )
 
           const { likeStatus, dislikeStatus } =
             await firebaseService.getLikesAndDislikesVideo(id)
@@ -114,7 +122,7 @@ const VideoPage = () => {
         setDislikeStatus,
         likeCount,
         dislikeCount,
-        "video"
+        ContentType.Video
       )
     } catch (error) {
       console.error("Error in clicking like:", error)
@@ -149,7 +157,7 @@ const VideoPage = () => {
         setDislikeStatus,
         likeCount,
         dislikeCount,
-        "video"
+        ContentType.Video
       )
     } catch (error) {
       console.error("Error in clicking dislike:", error)

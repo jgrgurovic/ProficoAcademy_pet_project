@@ -1,11 +1,13 @@
 import firebaseApp from "@config/firebase"
 import "firebase/database"
 import { getDatabase, ref, set, get } from "firebase/database"
+import { showToast } from "@/components/toastMessage"
+import { InteractionType } from "@utils/enums/interactionTypes"
 
 export const likeVideo = async (
   videoId: string,
   userId: number,
-  currentInteraction: string,
+  currentInteraction: InteractionType,
   likeCount: number,
   dislikeCount: number
 ) => {
@@ -31,7 +33,7 @@ export const likeVideo = async (
     let updatedLikeCount = likeCount
     let updatedDislikeCount = dislikeCount
 
-    if (currentInteraction === "like") {
+    if (currentInteraction === InteractionType.Like) {
       if (alreadyLiked) {
         await set(likesRef, { ...likedSnapshot.val(), [userId]: false })
         updatedLikeCount -= 1
@@ -47,7 +49,7 @@ export const likeVideo = async (
           updatedDislikeCount -= 1
         }
       }
-    } else if (currentInteraction === "dislike") {
+    } else if (currentInteraction === InteractionType.Dislike) {
       if (alreadyDisliked) {
         await set(dislikesRef, { ...dislikedSnapshot.val(), [userId]: false })
         updatedDislikeCount -= 1
@@ -64,7 +66,7 @@ export const likeVideo = async (
         }
       }
     } else {
-      console.log("Invalid interaction")
+      showToast("Invalid interaction.")
     }
 
     await set(likeCountRef, updatedLikeCount)
