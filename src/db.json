@@ -25,12 +25,20 @@
       "role": "user"
     },
     {
-      "id":4,
+      "id": 4,
       "name": "Lara Laric",
       "email": "lara.laric@example.com",
       "password": "lara",
       "avatar": "https://i.pravatar.cc/150?img=67",
-      "role":"user"
+      "role": "user"
+    },
+    {
+      "id": 5,
+      "name": "Maja Majic",
+      "email": "maja.majic@example.com",
+      "password": "maja",
+      "avatar": "https://i.pravatar.cc/150?img=67",
+      "role": "user"
     }
   ]
 }

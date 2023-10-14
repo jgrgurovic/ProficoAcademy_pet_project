@@ -1,5 +1,8 @@
 import axios from "axios"
+import { getDatabase, ref, set, get } from "firebase/database"
+import firebaseApp from "@config/firebase"
 import { SPOTIFY_HEADERS } from "config/constants"
+import { PodcastEpisode } from "types/interfaces/PodcastEpisode"
 
 export class SpotifyService {
   async fetchEpisode(id: string) {
@@ -27,6 +30,17 @@ export class SpotifyService {
     perPage: number
   ) {
     try {
+      const firebaseEpisodes: PodcastEpisode[] = []
+      const db = getDatabase(firebaseApp)
+      const episodesRef = ref(db, "data/podcasts/episodes")
+      const existingEpisodesSnapshot = await get(episodesRef)
+      const existingEpisodes: PodcastEpisode[] =
+        existingEpisodesSnapshot.val() || []
+
+      const existingEpisodeIds = new Set(
+        existingEpisodes.map((episodeData) => episodeData.id)
+      )
+
       const options = {
         method: "GET",
         url: "https://spotify23.p.rapidapi.com/podcast_episodes/",
@@ -56,6 +70,7 @@ export class SpotifyService {
               duration: { totalMilliseconds = 0 } = {},
               releaseDate: { isoString: rawPublicationDate = "N/A" } = {},
               podcastV2: { data: { name: podcastName = "N/A" } = {} } = {},
+
             } = {},
           } = {},
           uid = "",
@@ -78,9 +93,25 @@ export class SpotifyService {
           duration: totalMilliseconds > 0 ? totalMilliseconds / 1000 : 0,
           publicationDate: formattedPublicationDate,
           uid: uid,
+
           podcastName: podcastName,
         }
       })
+        }
+      })
+
+      for (const podcastEpisode of podcastEpisodes) {
+        const episodeID = podcastEpisode.id
+        if (!existingEpisodeIds.has(episodeID)) {
+          firebaseEpisodes.push(podcastEpisode)
+          existingEpisodeIds.add(episodeID)
+        }
+      }
+
+      if (firebaseEpisodes.length > 0) {
+        const updatedEpisodes = existingEpisodes.concat(firebaseEpisodes)
+        await set(episodesRef, updatedEpisodes)
+      }
 
       return podcastEpisodes
     } catch (error) {
