@@ -6,7 +6,7 @@ import { InteractionType } from "@utils/enums/interactionTypes"
 
 export const likeEpisode = async (
   episodeId: string,
-  userId: any,
+  userId: number,
   currentInteraction: InteractionType,
   likeCount: number,
   dislikeCount: number
@@ -39,46 +39,61 @@ export const likeEpisode = async (
     let updatedLikeCount = likeCount
     let updatedDislikeCount = dislikeCount
 
-    if (currentInteraction === InteractionType.Like) {
-      if (alreadyLiked) {
-        await set(likesRef, { ...likedSnapshot.val(), [userId]: false })
-        updatedLikeCount -= 1
-      } else {
-        await set(likesRef, {
-          ...likedSnapshot.val(),
-          timestamp,
-          [userId]: true,
-        })
-        updatedLikeCount += 1
-        if (alreadyDisliked) {
-          await set(dislikesRef, { ...dislikedSnapshot.val(), [userId]: false })
-          updatedDislikeCount -= 1
-        }
-      }
-    } else if (currentInteraction === InteractionType.Dislike) {
+    const handleLike = async () => {
+      await set(likesRef, {
+        ...likedSnapshot.val(),
+        timestamp,
+        [userId]: true,
+      })
+      updatedLikeCount += 1
+
       if (alreadyDisliked) {
         await set(dislikesRef, { ...dislikedSnapshot.val(), [userId]: false })
         updatedDislikeCount -= 1
-      } else {
-        await set(dislikesRef, {
-          ...dislikedSnapshot.val(),
-          timestamp,
-          [userId]: true,
-        })
-        updatedDislikeCount += 1
+      }
+    }
+
+    const handleDislike = async () => {
+      await set(dislikesRef, {
+        ...dislikedSnapshot.val(),
+        timestamp,
+        [userId]: true,
+      })
+      updatedDislikeCount += 1
+
+      if (alreadyLiked) {
+        await set(likesRef, { ...likedSnapshot.val(), [userId]: false })
+        updatedLikeCount -= 1
+      }
+    }
+
+    switch (currentInteraction) {
+      case InteractionType.Like:
         if (alreadyLiked) {
           await set(likesRef, { ...likedSnapshot.val(), [userId]: false })
           updatedLikeCount -= 1
+        } else {
+          await handleLike()
         }
-      }
-    } else {
-      showToast("Invalid interaction.")
+        break
+
+      case InteractionType.Dislike:
+        if (alreadyDisliked) {
+          await set(dislikesRef, { ...dislikedSnapshot.val(), [userId]: false })
+          updatedDislikeCount -= 1
+        } else {
+          await handleDislike()
+        }
+        break
+
+      default:
+        showToast("Invalid interaction.")
     }
 
     await set(likeCountRef, updatedLikeCount)
     await set(dislikeCountRef, updatedDislikeCount)
 
-    return { likeCount, dislikeCount }
+    return { likeCount: updatedLikeCount, dislikeCount: updatedDislikeCount }
   } catch (error) {
     showToast("An error occurred. Please try again later.")
     throw error
