@@ -97,8 +97,6 @@ export class SpotifyService {
           podcastName: podcastName,
         }
       })
-        }
-      })
 
       for (const podcastEpisode of podcastEpisodes) {
         const episodeID = podcastEpisode.id
