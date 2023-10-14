@@ -43,7 +43,7 @@ export class SpotifyService {
       const response = await axios.request(options)
       const episodesData =
         response.data.data?.podcastUnionV2?.episodesV2?.items || []
-
+      const podcastName = response.data.data?.podcastUnionV2?.name || "N/A"
       const podcastEpisodes = episodesData.map((episodeData: any) => {
         const audioItems = episodeData.entity?.data?.audio?.items || []
         const audioUrl = audioItems.length > 0 ? audioItems[0]?.url || "" : ""
@@ -71,6 +71,7 @@ export class SpotifyService {
             : 0,
           publicationDate: formattedPublicationDate,
           uid: episodeData.uid || "",
+          podcastName: podcastName,
         }
       })
 

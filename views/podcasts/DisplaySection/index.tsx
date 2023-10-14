@@ -7,6 +7,8 @@ import { PODCAST_IDs, MAX_RESULTS } from "config/constants"
 import Pagination from "@/components/Pagination"
 import { NumberParam, useQueryParams } from "use-query-params"
 import { MAX_PER_PAGE_SPOTIFY } from "config/constants"
+import SearchBar from "@views/Search&FilterSection/SearchBar/SearchBar"
+import TagCloud from "@views/Search&FilterSection/TagsCloud/TagsCloud"
 
 const Display = () => {
   const [podcastEpisodes, setPodcastEpisodes] = useState<PodcastEpisode[]>([])
@@ -15,7 +17,8 @@ const Display = () => {
     page: NumberParam,
     perPage: NumberParam,
   })
-
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedPodcast, setSelectedPodcast] = useState<string | null>(null)
   const handlePageChange = (newPage: number) => {
     setPagination({ page: newPage })
   }
@@ -56,19 +59,59 @@ const Display = () => {
     fetchPodcasts()
   }, [currentPage, itemsPerPage])
 
+  const filteredEpisodes = podcastEpisodes.filter(
+    (podcastEpisode) =>
+      podcastEpisode.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      (!selectedPodcast ||
+        podcastEpisode.podcastName.toLowerCase() ===
+          selectedPodcast.toLowerCase())
+  )
+
+  const handleTagClick = (podcast: string) => {
+    if (podcast === selectedPodcast) {
+      setSelectedPodcast(null)
+    } else {
+      setSelectedPodcast(podcast)
+    }
+    setPagination({ page: 1 })
+  }
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query)
+    setPagination({ page: 1 })
+  }
+  const podcastNames = Array.from(
+    new Set(podcastEpisodes.map((podcastEpisode) => podcastEpisode.podcastName))
+  )
   return (
     <div>
+      <div className="flex justify-center mx-24 mb-12">
+        <SearchBar onSearch={handleSearch} />
+      </div>
+      <div className="flex justify-center mx-36 mb-12">
+        <TagCloud
+          tags={podcastNames}
+          onTagClick={handleTagClick}
+          selectedTag={selectedPodcast}
+        />
+      </div>
       <PodcastList
-        episodes={podcastEpisodes}
+        episodes={filteredEpisodes}
+        searchQuery={searchQuery}
         currentPage={pagination.page || 1}
         itemsPerPage={pagination.perPage || MAX_PER_PAGE_SPOTIFY}
+        selectedPodcast={selectedPodcast}
       />
       <Pagination
         page={pagination.page || 1}
         perPage={pagination.perPage || MAX_PER_PAGE_SPOTIFY}
         setPagination={setPagination}
         onPageChange={handlePageChange}
-        totalItems={podcastEpisodes.length}
+        totalItems={
+          searchQuery || selectedPodcast
+            ? filteredEpisodes.length
+            : podcastEpisodes.length
+        }
       />
     </div>
   )
