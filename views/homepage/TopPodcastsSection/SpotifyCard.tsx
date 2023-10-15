@@ -1,41 +1,53 @@
 import React from "react"
 import Image from "next/image"
+import Link from "next/link"
 import SpotifyLogo from "../../../public/images/logos/spotify-logo.svg"
-const SpotifyCard = () => {
+import { SpotifyCardProps } from "types/interfaces/SpotifyCardProps"
+
+const SpotifyCard: React.FC<SpotifyCardProps> = ({
+  id,
+  title,
+  coverArtUrl,
+}) => {
   return (
-    <div className="w-100 h-40 flex justify-center items-center rounded-lg shadow-md backdrop-blur-md bg-opacity-30 backdrop-filter bg-white bg-opacity-10 p-2 ">
-      <div className="ml-auto relative w-full h-full  ">
+    <div
+      style={{ width: "500px", height: "230px" }}
+      className="rounded-lg shadow-md backdrop-blur-md bg-opacity-30 backdrop-filter bg-white bg-opacity-10 p-2 flex items-center duration-300 ease-in-out hover:scale-105 hover:shadow-2xl">
+      <div style={{ width: "50%", height: "100%" }} className="relative">
         <Image
-          src="/images/bella_fiori_mm.jpg"
+          src={coverArtUrl}
           alt="cover image"
           layout="fill"
           objectFit="cover"
-          className="w-full h-full rounded-lg"
+          className="rounded-lg"
         />
       </div>
-      <div>
-        <div className="pl-2">
+      <div
+        style={{ width: "50%", height: "100%" }}
+        className="pl-2 flex flex-col justify-between">
+        <div>
           <div className="flex items-center">
             <div>
-              <Image
-                src={SpotifyLogo}
-                alt="Spotify Logo"
-                width={66}
-                height={20}
-              />
+              <Link href="/podcasts/[id]" as={`/podcasts/${id}`}>
+                <Image
+                  src={SpotifyLogo}
+                  alt="Spotify Logo"
+                  width={66}
+                  height={20}
+                />
+              </Link>
             </div>
           </div>
           <div className="mt-2">
-            <h1 className="text-lg font-bold">episode title</h1>
-            <p className="text-sm font-light">podcast name</p>
+            <h1 className="text-lg font-bold">{title}</h1>
           </div>
-          <div className="mt-2 flex items-center">
-            <div className="w-16 h-1 bg-gray-300 rounded-sm"></div>
-            <div className="ml-2">00:00</div>
-            <button className="ml-2 bg-green-500 text-white px-2 py-1 rounded-md">
+        </div>
+        <div className="flex items-center">
+          <Link href="/podcasts/[id]" as={`/podcasts/${id}`}>
+            <button className="ml-2 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded-md">
               Play
             </button>
-          </div>
+          </Link>
         </div>
       </div>
     </div>

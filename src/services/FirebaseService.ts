@@ -1,15 +1,22 @@
 import {
   ref,
   get,
+  set,
+  push,
   getDatabase,
   orderByChild,
   query,
   limitToLast,
+  serverTimestamp,
 } from "firebase/database"
 import firebaseApp from "@config/firebase"
 import { ContentType } from "@utils/enums/contentTypes"
 
 const db = getDatabase(firebaseApp)
+
+interface CasesCardProps {
+  id: string
+}
 
 class FirebaseService {
   private async getLikeDislikeStatus(type: ContentType, id: string) {
@@ -94,7 +101,10 @@ class FirebaseService {
     }
   }
 
-  async getNewestContent() {
+  async getNewestContent(): Promise<{
+    newestVideos: CasesCardProps[]
+    newestEpisodes: CasesCardProps[]
+  } | null> {
     try {
       const newestVideosRef = ref(db, "data/content")
       const newestPodcastsRef = ref(db, "data/podcasts/episodes")
@@ -108,12 +118,18 @@ class FirebaseService {
       ])
 
       if (videoSnapshot.exists() && podcastSnapshot.exists()) {
-        const newestVideos = Object.values(videoSnapshot.val())
-        const newestPodcasts = Object.values(podcastSnapshot.val())
-        return { newestVideos, newestPodcasts }
+        const newestVideos = Object.values(
+          videoSnapshot.val()
+        ) as CasesCardProps[]
+        const newestEpisodes = Object.values(
+          podcastSnapshot.val()
+        ) as CasesCardProps[]
+        return { newestVideos, newestEpisodes }
       }
+      return null
     } catch (error) {
       console.error("Error fetching newest videos/podcasts:", error)
+      return null
     }
   }
 
@@ -243,6 +259,30 @@ class FirebaseService {
       return latestLikes
     } catch (error) {
       return []
+    }
+  }
+  async addCommentToContent(
+    contentType: string,
+    contentId: string,
+    userId: number,
+    username: string,
+    text: string,
+    avatar: string
+  ) {
+    try {
+      const newCommentRef = push(
+        ref(db, `${contentType}_comments/${contentId}`)
+      )
+      await set(newCommentRef, {
+        userId: userId,
+        username: username,
+        avatar: avatar,
+        text: text,
+        timestamp: serverTimestamp(),
+      })
+    } catch (error) {
+      console.error("Error adding comment:", error)
+      throw error
     }
   }
 }
