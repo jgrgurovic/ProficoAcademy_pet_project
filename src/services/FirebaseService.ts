@@ -1,10 +1,13 @@
 import {
   ref,
   get,
+  set,
+  push,
   getDatabase,
   orderByChild,
   query,
   limitToLast,
+  serverTimestamp,
 } from "firebase/database"
 import firebaseApp from "@config/firebase"
 import { ContentType } from "@utils/enums/contentTypes"
@@ -243,6 +246,28 @@ class FirebaseService {
       return latestLikes
     } catch (error) {
       return []
+    }
+  }
+  async addCommentToContent(
+    contentType: string,
+    contentId: string,
+    userId: number,
+    username: string,
+    text: string
+  ) {
+    try {
+      const newCommentRef = push(
+        ref(db, `${contentType}_comments/${contentId}`)
+      )
+      await set(newCommentRef, {
+        userId: userId,
+        username: username,
+        text: text,
+        timestamp: serverTimestamp(),
+      })
+    } catch (error) {
+      console.error("Error adding comment:", error)
+      throw error
     }
   }
 }
