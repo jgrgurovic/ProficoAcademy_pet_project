@@ -118,9 +118,11 @@ const Comments: React.FC<CommentsProps> = ({ contentType, contentId }) => {
                     {formatUnixTimestamp(comment.timestamp)}
                   </h3>
                 </div>
-                <div className="bg-black/40 p-2 px-3 shadow-2xl rounded-full max-w-xl pointer-cursor hover:scale-110 transition duration-300">
+                <div>
+                <div className="inline-block bg-black/40 p-2 px-3 shadow-2xl rounded-full max-w-xl pointer-cursor hover:scale-110 transition duration-300">
                   {comment.text}
                 </div>
+              </div>
               </div>
             </li>
           ))}
