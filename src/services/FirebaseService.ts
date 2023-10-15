@@ -253,7 +253,8 @@ class FirebaseService {
     contentId: string,
     userId: number,
     username: string,
-    text: string
+    text: string,
+    avatar: string
   ) {
     try {
       const newCommentRef = push(
@@ -262,6 +263,7 @@ class FirebaseService {
       await set(newCommentRef, {
         userId: userId,
         username: username,
+        avatar: avatar,
         text: text,
         timestamp: serverTimestamp(),
       })

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react"
+import Image from "next/image"
 import useAuth from "@/hooks/useAuth"
 import firebaseService from "@/services/FirebaseService"
 import { getDatabase } from "firebase/database"
-import { ref, off, onValue } from "firebase/database"
+import { ref, off, onValue, push, set } from "firebase/database"
 import firebaseApp from "@config/firebase"
 import { Comment } from "types/interfaces/Comment"
 import { ContentType } from "@utils/enums/contentTypes"
@@ -46,10 +47,8 @@ const Comments: React.FC<CommentsProps> = ({ contentType, contentId }) => {
     setIsButtonVisible(e.target.value.length > 0)
   }
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-
-    if (commentText.trim() === "") return
+  const addComment = async (text: string) => {
+    if (text.trim() === "") return
 
     try {
       if (userId !== undefined) {
@@ -58,7 +57,8 @@ const Comments: React.FC<CommentsProps> = ({ contentType, contentId }) => {
           contentId,
           userId,
           user!.name,
-          commentText
+          text,
+          user!.avatar
         )
         setCommentText("")
       }
@@ -67,8 +67,13 @@ const Comments: React.FC<CommentsProps> = ({ contentType, contentId }) => {
     }
   }
 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    addComment(commentText)
+  }
+
   return (
-    <div className="mx-24 mt-12 ">
+    <div className="mx-24 mt-12">
       <h2 className="text-4xl font-bold tracking-widest border-l-2">
         Case Discussion
       </h2>
@@ -94,21 +99,26 @@ const Comments: React.FC<CommentsProps> = ({ contentType, contentId }) => {
           .slice()
           .sort((a, b) => b.timestamp - a.timestamp)
           .map((comment) => (
-            <li key={comment.id}>
-              <div className="inline-block">
-                <h2
-                  className="text-white font-semibold mb-1 ml-1 mx-2 "
-                  style={{ display: "inline" }}>
-                  {comment.username}
-                </h2>
-                <h3
-                  className="text-gray-400 mb-1 mx-2"
-                  style={{ display: "inline" }}>
-                  {formatUnixTimestamp(comment.timestamp)}
-                </h3>
+            <li key={comment.id} className="flex items-start mb-4">
+              <div className="mr-4">
+                <Image
+                  src={comment.avatar}
+                  alt="user avatar"
+                  height={36}
+                  width={36}
+                  className="rounded-full"
+                />
               </div>
-              <div>
-                <div className="inline-block bg-black/40 p-2 px-3 shadow-2xl rounded-full max-w-xl pointer-cursor hover:scale-110 transition duration-300">
+              <div className="w-full">
+                <div className="flex items-center mb-1">
+                  <h2 className="text-white font-semibold">
+                    {comment.username}
+                  </h2>
+                  <h3 className="text-gray-400 ml-2">
+                    {formatUnixTimestamp(comment.timestamp)}
+                  </h3>
+                </div>
+                <div className="bg-black/40 p-2 px-3 shadow-2xl rounded-full max-w-xl pointer-cursor hover:scale-110 transition duration-300">
                   {comment.text}
                 </div>
               </div>

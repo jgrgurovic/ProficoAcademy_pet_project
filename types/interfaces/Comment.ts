@@ -3,5 +3,8 @@ export interface Comment {
   text: string
   userId: number
   username: string
+  avatar: string
   timestamp: number
+  replyText: string
+  showReplyInput: boolean
 }
