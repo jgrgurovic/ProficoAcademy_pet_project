@@ -69,6 +69,8 @@ export class SpotifyService {
               description = "N/A",
               duration: { totalMilliseconds = 0 } = {},
               releaseDate: { isoString: rawPublicationDate = "N/A" } = {},
+              podcastV2: { data: { name: podcastName = "N/A" } = {} } = {},
+
             } = {},
           } = {},
           uid = "",
@@ -91,6 +93,8 @@ export class SpotifyService {
           duration: totalMilliseconds > 0 ? totalMilliseconds / 1000 : 0,
           publicationDate: formattedPublicationDate,
           uid: uid,
+
+          podcastName: podcastName,
         }
       })
 
