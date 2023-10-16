@@ -3,11 +3,13 @@ import "firebase/database"
 import { getDatabase, ref, set, get } from "firebase/database"
 import { showToast } from "@/components/toastMessage"
 import { InteractionType } from "@utils/enums/interactionTypes"
+import { ContentType } from "@utils/enums/contentTypes"
 
 export const likeVideo = async (
   videoId: string,
   userId: number,
   currentInteraction: InteractionType,
+  contentType: ContentType,
   likeCount: number,
   dislikeCount: number
 ) => {
@@ -37,6 +39,7 @@ export const likeVideo = async (
       await set(likesRef, {
         ...likedSnapshot.val(),
         timestamp,
+        ContentType,
         [userId]: true,
       })
       updatedLikeCount += 1
@@ -51,6 +54,7 @@ export const likeVideo = async (
       await set(dislikesRef, {
         ...dislikedSnapshot.val(),
         timestamp,
+        ContentType,
         [userId]: true,
       })
       updatedDislikeCount += 1

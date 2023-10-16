@@ -53,6 +53,7 @@ class InteractionService {
           contentId,
           userId,
           InteractionType.Like,
+          ContentType.Video,
           likeCount,
           dislikeCount
         )
@@ -61,6 +62,7 @@ class InteractionService {
           contentId,
           userId,
           InteractionType.Like,
+          ContentType.Podcast,
           likeCount,
           dislikeCount
         )
@@ -112,6 +114,7 @@ class InteractionService {
           contentId,
           userId,
           InteractionType.Dislike,
+          ContentType.Video,
           likeCount,
           dislikeCount
         )
@@ -120,6 +123,7 @@ class InteractionService {
           contentId,
           userId,
           InteractionType.Dislike,
+          ContentType.Podcast,
           likeCount,
           dislikeCount
         )
