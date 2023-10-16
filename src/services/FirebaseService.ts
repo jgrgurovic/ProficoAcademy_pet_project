@@ -14,6 +14,10 @@ import { ContentType } from "@utils/enums/contentTypes"
 
 const db = getDatabase(firebaseApp)
 
+interface CasesCardProps {
+  id: string
+}
+
 class FirebaseService {
   private async getLikeDislikeStatus(type: ContentType, id: string) {
     const contentType = type === ContentType.Podcast ? "podcasts" : "videos"
@@ -97,7 +101,10 @@ class FirebaseService {
     }
   }
 
-  async getNewestContent() {
+  async getNewestContent(): Promise<{
+    newestVideos: CasesCardProps[]
+    newestEpisodes: CasesCardProps[]
+  } | null> {
     try {
       const newestVideosRef = ref(db, "data/content")
       const newestPodcastsRef = ref(db, "data/podcasts/episodes")
@@ -111,12 +118,18 @@ class FirebaseService {
       ])
 
       if (videoSnapshot.exists() && podcastSnapshot.exists()) {
-        const newestVideos = Object.values(videoSnapshot.val())
-        const newestPodcasts = Object.values(podcastSnapshot.val())
-        return { newestVideos, newestPodcasts }
+        const newestVideos = Object.values(
+          videoSnapshot.val()
+        ) as CasesCardProps[]
+        const newestEpisodes = Object.values(
+          podcastSnapshot.val()
+        ) as CasesCardProps[]
+        return { newestVideos, newestEpisodes }
       }
+      return null
     } catch (error) {
       console.error("Error fetching newest videos/podcasts:", error)
+      return null
     }
   }
 

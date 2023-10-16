@@ -94,7 +94,7 @@ export function CaseForm() {
           />
         </div>
 
-        <div className="w-3/4">
+        <div className="w-3/4 mt-2">
           <label>Case Title:</label>
           <Controller
             name="caseTitle"
@@ -119,7 +119,7 @@ export function CaseForm() {
           )}
         </div>
 
-        <div>
+        <div className="mt-2">
           <label>Case Story:</label>
           <Controller
             name="caseStory"
