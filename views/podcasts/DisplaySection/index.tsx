@@ -80,9 +80,11 @@ const Display = () => {
     setSearchQuery(query)
     setPagination({ page: 1 })
   }
+  
   const podcastNames = Array.from(
     new Set(podcastEpisodes.map((podcastEpisode) => podcastEpisode.podcastName))
   )
+  
   return (
     <div>
       <div className="flex justify-center mx-24 mb-12">
