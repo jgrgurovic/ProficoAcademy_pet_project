@@ -199,13 +199,13 @@ const VideoPage = () => {
       return
     }
     try {
-      await toggleBookmark(userId, id, video)
+      await toggleBookmark(userId, id, video, ContentType.Video)
       setIsBookmarked(!isBookmarked)
     } catch (error) {
       console.error("Error toggling bookmark:", error)
     }
   }
- 
+
   const toggleDescription = () => {
     setDescriptionVisible(!isDescriptionVisible)
   }
@@ -228,7 +228,7 @@ const VideoPage = () => {
           />
         </div>
         <div className="px-4 w-1/2 flex-shrink ">
-                  <div className="inline-flex w-full">
+          <div className="inline-flex w-full">
             <div>
               <Image
                 src={YoutubeLogo}

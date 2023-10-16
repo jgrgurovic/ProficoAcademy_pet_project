@@ -186,7 +186,7 @@ const EpisodePage = () => {
       return
     }
     try {
-      await toggleBookmark(userId, id, episode)
+      await toggleBookmark(userId, id, episode, ContentType.Podcast)
       setIsBookmarked(!isBookmarked)
     } catch (error) {
       console.error("Error toggling bookmark:", error)
