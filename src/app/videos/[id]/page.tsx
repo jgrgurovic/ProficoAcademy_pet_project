@@ -24,6 +24,7 @@ import interactionService from "@/services/InteractionService"
 import { InteractionType } from "@utils/enums/interactionTypes"
 import { ContentType } from "@utils/enums/contentTypes"
 import { compute } from "@utils/static/compute"
+import Comments from "@views/Cooments/Comments"
 
 const VideoPage = () => {
   const { user } = useAuth()
@@ -205,7 +206,7 @@ const VideoPage = () => {
       console.error("Error toggling bookmark:", error)
     }
   }
- 
+
   const toggleDescription = () => {
     setDescriptionVisible(!isDescriptionVisible)
   }
@@ -228,7 +229,7 @@ const VideoPage = () => {
           />
         </div>
         <div className="px-4 w-1/2 flex-shrink ">
-                  <div className="inline-flex w-full">
+          <div className="inline-flex w-full">
             <div>
               <Image
                 src={YoutubeLogo}
@@ -308,6 +309,7 @@ const VideoPage = () => {
             ))}
           </div>
         )}
+        <Comments contentId={id} contentType={ContentType.Video} />
       </div>
     </>
   )

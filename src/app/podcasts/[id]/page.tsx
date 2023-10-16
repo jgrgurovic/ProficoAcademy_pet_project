@@ -27,6 +27,7 @@ import firebaseService from "@/services/FirebaseService"
 import interactionService from "@/services/InteractionService"
 import { InteractionType } from "@utils/enums/interactionTypes"
 import { ContentType } from "@utils/enums/contentTypes"
+import Comments from "@views/Cooments/Comments"
 
 const EpisodePage = () => {
   const { user } = useAuth()
@@ -305,6 +306,7 @@ const EpisodePage = () => {
             ))}
           </div>
         )}
+        <Comments contentId={id} contentType={ContentType.Podcast} />
       </div>
     </>
   )
