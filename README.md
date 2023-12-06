@@ -1,20 +1,42 @@
-**True Crime Platforma: Duboko zaronite u neriješene slučajeve**
+# True Crime Platform: Dive into Unsolved Mysteries
 
-Platforma koja poziva korisnike da istraže mnoštvo stvarnih slučajeva zločina, omogućujući im da urone u misterije i zamršenosti neriješenih scenarija. Služi kao centralizirano središte, agregirajući sadržaj iz različitih izvora kao što su Youtube i Spotify, dok istovremeno zadovoljava sve veći interes za istinite zločine.
+Welcome to my True Crime Platform – your gateway to exploring a plethora of real crime cases. Immerse yourself in the mysteries and complexities of unsolved scenarios. The platform serves as a centralized hub, aggregating content from various sources such as YouTube and Spotify, catering to the growing interest in true crime.
 
-**Features**:
+## Key Features
 
-1.**Korisnički profili:** Stvaranje korisničkih profila, pružanje pristupa za sudjelovanje u raspravama oko podcasta i videa. Uz postavljene profile, korisnici mogu doprinijeti svojim uvidima i mišljenjima, potičući živu zajednicu.
+### 1. User Profiles
+Create your user profile and gain access to engaging discussions around podcasts and videos. Contribute your insights and opinions, fostering a vibrant community of true crime enthusiasts.
 
-2.**Filtriranje:** Korisnici se mogu bez napora kretati kroz spektar slučajeva, koristeći filtre kao što su razlikovanje hladnih od riješenih slučajeva, razlikovanje sadržaja dostupnog na YouTubeu i Spotifyju i razvrstavanje po datumu objave.
+### 2. Filtering
+Effortlessly navigate through a spectrum of cases using intuitive filters.Users can  filter by case name or creator name using cloud tags.
 
-3.**Bookmarking:** Bilo da je namijenjeno za kasnije slušanje ili gledanje, značajka označavanja osigurava organizaciju intrigantnih slučajeva bez muke.
+### 3. Bookmarking
+Whether for later listening or watching, our bookmarking feature ensures the effortless organization of intriguing cases.
 
-4.**User-generated Content:** Omogućuje korisnicima da aktivno sudjeluju predlaganjem i podnošenjem vlastitih istinitih slučajeva zločina. Otvarajući vrata za sadržaj koji generiraju korisnici, platforma njeguje atmosferu suradnje, potičući evoluirajuće spremište zadivljujućih narativa.
+### 4. User-generated Content
+Actively participate by suggesting and submitting your own true crime cases. Open the doors to user-generated content, nurturing a collaborative atmosphere and evolving repository of captivating narratives.
 
-5.**Content Recommendation:** Na homepage-u korisnicima će biti predloženi : 'featured' slučajevi, najgledaniji videi, najslušaniji podcastov-i
+### 5. Content Recommendation
+Discover the most recent youtuve videos and spotify podcasts right on the homepage.
 
-*U osnovi centralizira sadržaj true crime-a koristeći YouTube i Spotify API-je, istovremeno korisnicima omogućuje diskusiju (koja se trenutno vodi po youtube-u i reddit-u) i međusbonu neku interakciju. Korisnici mogu komentirati, označavati omiljene slučajeve, davati ocjene, filtrirati sadržaj i pretraživati po nazivu. Omogućuje korisnicima da uživaju u istraživanju true crime sadržaja i miče potrebu kopanja po internetu za dodatnim sadržajem.*
+## Technologies Used
 
+- Next.js
+- Tailwind CSS
+- Firebase
+- YouTube API
+- Spotify API
+- JavaScript
 
-->Trenutna Figma :)) ![Project Screenshot](/public/figma31.8..png)
+## How It Works
+
+Our platform centralizes true crime content using YouTube and Spotify APIs, allowing users to engage in discussions like the ones that are currently happening on YouTube and Reddit. Users can comment, mark favorite cases, give likes/dislikes, filter content by case name or creator name, and search by case name. Enjoy exploring true crime content without the hassle of digging through the internet for additional material.
+
+## Getting Started
+
+- Clone the repository
+- Run `npm install` to install dependencies
+- Start the development server with `npm start`
+
+Feel free to contribute, report issues, or suggest enhancements. Let's unravel the mysteries together!
+
