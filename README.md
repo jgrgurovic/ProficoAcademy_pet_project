@@ -26,7 +26,7 @@ Discover the most recent youtube videos and spotify podcasts right on the homepa
 - Firebase
 - YouTube API
 - Spotify API
-- JavaScript
+- TypeScript
 
 ## How It Works
 
