@@ -17,7 +17,7 @@ Whether for later listening or watching, our bookmarking feature ensures the eff
 Actively participate by suggesting and submitting your own true crime cases. Open the doors to user-generated content, nurturing a collaborative atmosphere and evolving repository of captivating narratives.
 
 ### 5. Content Recommendation
-Discover the most recent youtuve videos and spotify podcasts right on the homepage.
+Discover the most recent youtube videos and spotify podcasts right on the homepage.
 
 ## Technologies Used
 
@@ -30,7 +30,7 @@ Discover the most recent youtuve videos and spotify podcasts right on the homepa
 
 ## How It Works
 
-Our platform centralizes true crime content using YouTube and Spotify APIs, allowing users to engage in discussions like the ones that are currently happening on YouTube and Reddit. Users can comment, mark favorite cases, give likes/dislikes, filter content by case name or creator name, and search by case name. Enjoy exploring true crime content without the hassle of digging through the internet for additional material.
+This platform centralizes true crime content using YouTube and Spotify APIs, allowing users to engage in discussions like the ones that are currently happening on YouTube and Reddit. Users can comment, mark favorite cases, give likes/dislikes, filter content by case name or creator name, and search by case name. Enjoy exploring true crime content without the hassle of digging through the internet for additional material.
 
 ## Getting Started
 
